@@ -44,6 +44,12 @@ export function Header() {
             <Link href="/meals" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
               Meals Plan
             </Link>
+            <Link href="/how-it-works" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
+              How It Works
+            </Link>
+            <Link href="/recipes" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
+              Recipes
+            </Link>
             <Link href="/contact" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
               Help Center
             </Link>
@@ -174,6 +180,20 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Meals Plan
+              </Link>
+              <Link
+                href="/how-it-works"
+                className="px-2 py-2 text-gray-700 hover:text-easymeals-green hover:bg-gray-50 rounded-md transition-colors font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                How It Works
+              </Link>
+              <Link
+                href="/recipes"
+                className="px-2 py-2 text-gray-700 hover:text-easymeals-green hover:bg-gray-50 rounded-md transition-colors font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Recipes
               </Link>
               <Link
                 href="/contact"
