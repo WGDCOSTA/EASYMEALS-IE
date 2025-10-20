@@ -112,6 +112,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/affiliate" className="text-gray-400 hover:text-easymeals-orange transition-colors font-semibold">
+                  Become an Affiliate Partner
+                </Link>
+              </li>
+              <li>
                 <Link href="/terms" className="text-gray-400 hover:text-easymeals-green transition-colors">
                   Terms of Service
                 </Link>

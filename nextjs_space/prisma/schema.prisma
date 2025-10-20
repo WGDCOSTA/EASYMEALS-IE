@@ -77,6 +77,7 @@ model Product {
   name            String
   description     String
   price           Float
+  originalPrice   Float?          // For showing discounts
   imageUrl        String
   category        ProductCategory
   isActive        Boolean         @default(true)
@@ -90,11 +91,19 @@ model Product {
   preparationTime Int?            // minutes
   servingSize     Int?            // servings
   ingredients     String?
+  tags            String[]        @default([])  // halal, pasta, kids, student, etc.
+  isFeatured      Boolean         @default(false)
+  isBestOffer     Boolean         @default(false)
+  isTopSaver      Boolean         @default(false)
+  discount        Int?            // percentage discount
+  stockAlert      Int?            // show "only X left" when stock below this
+  limitedTimeOffer DateTime?      // show countdown timer
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   
   orderItems      OrderItem[]
   subscriptionItems SubscriptionItem[]
+  sectionProducts SectionProduct[]
   
   @@map("products")
 }
@@ -247,4 +256,108 @@ model PageContent {
   updatedAt   DateTime @updatedAt
   
   @@map("page_contents")
+}
+
+model ProductSection {
+  id          String   @id @default(cuid())
+  name        String   // "Easy Meals Anytime", "Halal Meals", "PASTA Meals", etc.
+  slug        String   @unique
+  title       String
+  description String?
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  maxProducts Int      @default(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  sectionProducts SectionProduct[]
+  
+  @@map("product_sections")
+}
+
+model SectionProduct {
+  id         String   @id @default(cuid())
+  sectionId  String
+  productId  String
+  displayOrder Int    @default(0)
+  createdAt  DateTime @default(now())
+  
+  section    ProductSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  product    Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([sectionId, productId])
+  @@map("section_products")
+}
+
+model Affiliate {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  company         String?
+  referralCode    String   @unique
+  commissionRate  Float    @default(20.0)  // percentage
+  status          AffiliateStatus @default(PENDING)
+  totalEarnings   Float    @default(0)
+  pendingEarnings Float    @default(0)
+  paidEarnings    Float    @default(0)
+  paypalEmail     String?
+  bankDetails     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  referrals       AffiliateReferral[]
+  payouts         AffiliatePayout[]
+  
+  @@map("affiliates")
+}
+
+model AffiliateReferral {
+  id          String   @id @default(cuid())
+  affiliateId String
+  orderId     String
+  orderAmount Float
+  commission  Float
+  status      ReferralStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id])
+  
+  @@map("affiliate_referrals")
+}
+
+model AffiliatePayout {
+  id          String   @id @default(cuid())
+  affiliateId String
+  amount      Float
+  method      String   // PayPal, Bank Transfer, etc.
+  status      PayoutStatus @default(PENDING)
+  reference   String?
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+  
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id])
+  
+  @@map("affiliate_payouts")
+}
+
+enum AffiliateStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+  REJECTED
+}
+
+enum ReferralStatus {
+  PENDING
+  APPROVED
+  PAID
+  CANCELLED
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }
