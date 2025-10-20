@@ -49,63 +49,87 @@ export default async function HomePage() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-yellow-50 via-orange-50 to-yellow-100 py-16 md:py-24 overflow-hidden">
-        {/* Decorative dots like in reference design */}
-        <div className="absolute top-10 left-10 w-3 h-3 bg-yellow-400 rounded-full opacity-60"></div>
-        <div className="absolute top-20 right-20 w-4 h-4 bg-orange-400 rounded-full opacity-40"></div>
-        <div className="absolute bottom-20 left-1/4 w-2 h-2 bg-yellow-400 rounded-full opacity-50"></div>
-        <div className="absolute bottom-32 right-1/3 w-3 h-3 bg-orange-400 rounded-full opacity-30"></div>
+      {/* Hero Section - Cork Delivery Banner */}
+      <section className="relative bg-gradient-to-br from-easymeals-orange via-red-600 to-easymeals-orange py-12 overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-10 w-48 h-48 bg-white/10 rounded-full"></div>
+        <div className="absolute bottom-10 right-1/4 w-32 h-32 bg-white/10 rounded-full"></div>
+        <div className="absolute top-20 left-10 w-24 h-24 bg-easymeals-yellow/20 rounded-full"></div>
         
-        <div className="container mx-auto max-w-6xl px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-block mb-4">
-                <span className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold">
-                  🎉 Fresh meals delivered daily
-                </span>
-              </div>
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Make your own food,
-                <span className="block text-orange-500">stay at home</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Skip the cooking, not the nutrition. Chef-prepared meals made with fresh, 
-                local ingredients and delivered to your door in Cork.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all">
-                  <Link href="/meals">
-                    Browse Meals <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="rounded-full border-2 border-gray-900 hover:bg-gray-900 hover:text-white font-semibold">
-                  <Link href="/subscriptions">View Subscriptions</Link>
-                </Button>
-              </div>
-            </div>
+        <div className="container mx-auto max-w-7xl px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="relative">
-              <div className="relative aspect-square bg-gradient-to-br from-orange-100 to-yellow-100 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+              <div className="relative aspect-square max-w-md mx-auto">
                 <Image
                   src="https://cdn.abacus.ai/images/89c41a16-b55b-4ced-b876-30b5b3a7e3db.png"
-                  alt="Delicious ready-made meals"
+                  alt="Fresh ready-made meals"
                   fill
-                  className="object-cover"
+                  className="object-cover rounded-full"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />
               </div>
-              {/* Floating card element like in references */}
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-4 hidden md:block">
-                <div className="flex items-center gap-3">
-                  <div className="bg-orange-500 rounded-full p-3">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Ready in</p>
-                    <p className="text-lg font-bold text-gray-900">15 mins</p>
-                  </div>
+            </div>
+            <div className="text-white text-center lg:text-left">
+              <h1 className="text-5xl lg:text-7xl font-extrabold mb-4 leading-tight">
+                HELLO CORK
+              </h1>
+              <p className="text-2xl lg:text-3xl font-semibold mb-6">
+                GET YOUR MEALS READY FOR DELIVERY.
+              </p>
+              <h2 className="text-4xl lg:text-6xl font-bold mb-8">
+                FROZEN OR FRESH
+                <span className="block text-xl lg:text-2xl font-normal mt-2">AT YOUR DOORSTEP :</span>
+              </h2>
+              <div className="flex flex-wrap gap-3 justify-center lg:justify-start mb-6">
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">BLARNEY</span>
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">CORK CITY</span>
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">GLANMIRE</span>
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">TOWER</span>
+              </div>
+              <div className="flex flex-wrap gap-3 justify-center lg:justify-start mb-8">
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">CARRIGTWOHILL</span>
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">BALLINCOLLIG</span>
+                <span className="bg-easymeals-red px-6 py-2 rounded-full font-semibold text-white shadow-lg">CARRIGALINE</span>
+              </div>
+              <div className="inline-block">
+                <div className="bg-white text-easymeals-orange px-8 py-4 rounded-full font-bold text-2xl shadow-2xl">
+                  30% OFF
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Action Cards */}
+      <section className="py-8 bg-gradient-to-br from-blue-600 to-indigo-700">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-green-600 p-8 rounded-2xl text-white relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full"></div>
+              <div className="relative z-10">
+                <div className="inline-block bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                  $10 OFF
+                </div>
+                <h3 className="text-xl font-semibold mb-2">The Fitness Kitchen</h3>
+                <h2 className="text-4xl font-bold mb-4">Frozen or Chilled</h2>
+                <Button asChild className="bg-easymeals-yellow hover:bg-yellow-400 text-gray-900 font-semibold rounded-full">
+                  <Link href="/meals?category=fitness">SHOP NOW</Link>
+                </Button>
+              </div>
+            </div>
+            <div className="bg-easymeals-yellow p-8 rounded-2xl text-white relative overflow-hidden">
+              <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full"></div>
+              <div className="relative z-10">
+                <div className="inline-block bg-easymeals-red text-white px-4 py-1 rounded-full text-sm font-semibold mb-4">
+                  TOP 5
+                </div>
+                <h3 className="text-xl font-semibold mb-2">It's Curry Time</h3>
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">Chicken & Curry</h2>
+                <Button asChild className="bg-easymeals-charcoal hover:bg-gray-700 text-white font-semibold rounded-full">
+                  <Link href="/meals?category=curry">SHOP NOW</Link>
+                </Button>
               </div>
             </div>
           </div>

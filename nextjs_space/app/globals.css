@@ -13,8 +13,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* EasyMeals Brand Green */
+    --primary: 84 81% 44%;
+    --primary-foreground: 0 0% 100%;
  
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -22,17 +23,27 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* EasyMeals Accent Red */
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
  
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 84 81% 44%;
  
     --radius: 0.5rem;
+
+    /* EasyMeals Custom Colors */
+    --easymeals-green: 84 81% 44%;
+    --easymeals-red: 0 72% 51%;
+    --easymeals-yellow: 45 98% 54%;
+    --easymeals-charcoal: 215 17% 30%;
+    --easymeals-turquoise: 174 72% 41%;
+    --easymeals-purple: 271 76% 53%;
+    --easymeals-orange: 24 95% 53%;
   }
  
   .dark {

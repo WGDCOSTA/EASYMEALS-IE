@@ -60,6 +60,14 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        // EasyMeals Brand Colors
+        'easymeals-green': 'hsl(var(--easymeals-green))',
+        'easymeals-red': 'hsl(var(--easymeals-red))',
+        'easymeals-yellow': 'hsl(var(--easymeals-yellow))',
+        'easymeals-charcoal': 'hsl(var(--easymeals-charcoal))',
+        'easymeals-turquoise': 'hsl(var(--easymeals-turquoise))',
+        'easymeals-purple': 'hsl(var(--easymeals-purple))',
+        'easymeals-orange': 'hsl(var(--easymeals-orange))',
       },
       keyframes: {
         'accordion-down': {

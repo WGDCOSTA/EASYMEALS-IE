@@ -3,8 +3,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { ShoppingCart, Menu, X, User, LogOut } from 'lucide-react'
+import { ShoppingCart, Menu, X, User, LogOut, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -24,37 +25,45 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b">
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">EM</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">EasyMeals.ie</span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="EasyMeals"
+              width={160}
+              height={80}
+              className="h-16 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/meals" className="text-gray-700 hover:text-orange-500 transition-colors">
-              Browse Meals
+          <nav className="hidden lg:flex items-center space-x-1">
+            <Link href="/meals" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
+              Meals Plan
             </Link>
-            <Link href="/subscriptions" className="text-gray-700 hover:text-orange-500 transition-colors">
-              Subscriptions
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-500 transition-colors">
-              Contact
+            <Link href="/contact" className="px-4 py-2 text-gray-700 hover:text-easymeals-green transition-colors font-medium">
+              Help Center
             </Link>
           </nav>
 
           {/* Right side actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {/* Wishlist */}
+            <Link href="/profile">
+              <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
+
             {/* Cart */}
             <Link href="/cart">
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-easymeals-red text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
                     {itemCount}
                   </span>
                 )}
@@ -135,14 +144,12 @@ export function Header() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/auth/signin">Sign In</Link>
-                </Button>
-                <Button asChild size="sm" className="bg-orange-500 hover:bg-orange-600">
-                  <Link href="/auth/signup">Sign Up</Link>
-                </Button>
-              </div>
+              <Button asChild size="sm" className="bg-easymeals-green hover:bg-easymeals-green/90 text-white rounded-full px-6">
+                <Link href="/auth/signin">
+                  <User className="h-4 w-4 mr-2" />
+                  Sign In / Register
+                </Link>
+              </Button>
             )}
 
             {/* Mobile menu button */}
@@ -159,32 +166,51 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="lg:hidden py-4 border-t">
             <nav className="flex flex-col space-y-2">
               <Link
                 href="/meals"
-                className="px-2 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md transition-colors"
+                className="px-2 py-2 text-gray-700 hover:text-easymeals-green hover:bg-gray-50 rounded-md transition-colors font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Browse Meals
-              </Link>
-              <Link
-                href="/subscriptions"
-                className="px-2 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Subscriptions
+                Meals Plan
               </Link>
               <Link
                 href="/contact"
-                className="px-2 py-2 text-gray-700 hover:text-orange-500 hover:bg-gray-50 rounded-md transition-colors"
+                className="px-2 py-2 text-gray-700 hover:text-easymeals-green hover:bg-gray-50 rounded-md transition-colors font-medium"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Contact
+                Help Center
               </Link>
             </nav>
           </div>
         )}
+      </div>
+
+      {/* Category Navigation Bar */}
+      <div className="bg-easymeals-charcoal text-white">
+        <div className="container mx-auto max-w-7xl px-4">
+          <nav className="flex items-center space-x-8 h-12 overflow-x-auto scrollbar-hide">
+            <Link href="/meals?category=combos" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Combos Meals
+            </Link>
+            <Link href="/meals?category=kids" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Kids Meals
+            </Link>
+            <Link href="/meals?category=halal" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Halal Meals
+            </Link>
+            <Link href="/meals?category=student" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Student Life
+            </Link>
+            <Link href="/meals?category=fitness" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Health, Fitness
+            </Link>
+            <Link href="/meals?category=busy" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+              Busy Life & Easy Food
+            </Link>
+          </nav>
+        </div>
       </div>
     </header>
   )
