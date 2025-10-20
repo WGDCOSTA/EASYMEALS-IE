@@ -125,9 +125,9 @@ export function Header() {
                         >
                           My Subscriptions
                         </Link>
-                        {(session.user?.role === 'ADMIN' || session.user?.role === 'SUPER_ADMIN') && (
+                        {((session.user as any)?.role === 'ADMIN' || (session.user as any)?.role === 'SUPER_ADMIN') && (
                           <Link 
-                            href="/admin" 
+                            href="/admin/dashboard" 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             onClick={() => setUserDropdownOpen(false)}
                           >
