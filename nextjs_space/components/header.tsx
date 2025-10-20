@@ -30,7 +30,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.png"
+              src="/easymeals-icon.png"
               alt="EasyMeals"
               width={160}
               height={80}
@@ -211,22 +211,22 @@ export function Header() {
       <div className="bg-easymeals-charcoal text-white">
         <div className="container mx-auto max-w-7xl px-4">
           <nav className="flex items-center space-x-8 h-12 overflow-x-auto scrollbar-hide">
-            <Link href="/meals?category=combos" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/combos-meals" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Combos Meals
             </Link>
-            <Link href="/meals?category=kids" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/kids-meals" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Kids Meals
             </Link>
-            <Link href="/meals?category=halal" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/halal-meals" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Halal Meals
             </Link>
-            <Link href="/meals?category=student" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/student-life" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Student Life
             </Link>
-            <Link href="/meals?category=fitness" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/health-fitness" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Health, Fitness
             </Link>
-            <Link href="/meals?category=busy" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
+            <Link href="/busy-life" className="whitespace-nowrap hover:text-easymeals-green transition-colors">
               Busy Life & Easy Food
             </Link>
           </nav>

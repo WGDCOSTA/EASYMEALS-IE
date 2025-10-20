@@ -11,16 +11,15 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-4">
               <Image
-                src="/logo.png"
+                src="/easymeals-icon.png"
                 alt="EasyMeals"
                 width={120}
                 height={60}
-                className="h-12 w-auto brightness-0 invert"
+                className="h-12 w-auto"
               />
             </Link>
             <p className="text-gray-400 mb-4 leading-relaxed">
-              Fresh and frozen ready-made meals delivered to your door throughout Ireland and Northern Ireland. 
-              Healthy, delicious, and convenient meal solutions for busy lifestyles.
+              Cork's favourite ready-made meal delivery service. Fresh, frozen, and delicious meals delivered straight to your door. From student budgets to family feasts, we've got Cork covered.
             </p>
           </div>
 

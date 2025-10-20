@@ -90,14 +90,14 @@ export default async function HomePage() {
             <div>
               <div className="inline-block mb-4">
                 <span className="bg-easymeals-green/10 text-easymeals-green px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide">
-                  Happy Customers
+                  Serving Cork & Surrounding Areas
                 </span>
               </div>
               <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-                Ireland&apos;s Best Rated Meal Delivery Service
+                Real Meals, Ready Fast - Delivered to Your Cork Home
               </h1>
               <p className="text-xl text-gray-600 mb-6">
-                Over 1 Million meals delivered to happy customers throughout Ireland
+                From Douglas to Ballincollig, Blackrock to Bishopstown - we're bringing proper food to busy Cork people. No fancy talk, just good meals made simple.
               </p>
               
               {/* Star rating */}
@@ -109,13 +109,20 @@ export default async function HomePage() {
                 </div>
                 <span className="ml-3 text-2xl font-bold text-gray-900">4.5</span>
               </div>
-              <p className="text-sm text-gray-500 mb-8">Based on 110+ Google Reviews</p>
+              <p className="text-sm text-gray-500 mb-8">Based on 110+ Reviews from Real Cork Customers</p>
 
-              <Button asChild size="lg" className="bg-easymeals-green hover:bg-easymeals-green/90 text-white rounded-full font-semibold text-lg px-10 shadow-xl hover:shadow-2xl transition-all">
-                <Link href="/meals">
-                  Get Started Now
-                </Link>
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild size="lg" className="bg-easymeals-orange hover:bg-easymeals-orange/90 text-white rounded-full font-semibold text-lg px-10 shadow-xl hover:shadow-2xl transition-all">
+                  <Link href="/meals">
+                    Browse Meals
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="border-2 border-easymeals-orange text-easymeals-orange hover:bg-easymeals-orange hover:text-white rounded-full font-semibold text-lg px-10">
+                  <Link href="/subscriptions">
+                    Start Subscription
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -134,10 +141,10 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              How It Works
+              How EasyMeals Works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Premium, fresh and healthy meals delivered weekly to your door
+              Three simple steps to better eating in Cork - no hassle, no waste, just great food
             </p>
           </div>
 
@@ -154,23 +161,23 @@ export default async function HomePage() {
                 />
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">You Choose</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">1. Pick Your Meals</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Select your plan depending on who&apos;s at home</span>
+                    <span className="text-gray-600">Browse our menu - from student meals to family combos</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Choose from Frozen or Fresh Chilled plans</span>
+                    <span className="text-gray-600">Choose frozen or fresh - whatever suits your lifestyle</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Over 20 new recipes each week</span>
+                    <span className="text-gray-600">Order once-off or set up a weekly subscription</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Pause, skip or cancel any time</span>
+                    <span className="text-gray-600">No commitment - pause or cancel anytime</span>
                   </li>
                 </ul>
               </div>
@@ -188,22 +195,23 @@ export default async function HomePage() {
                 />
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">We Deliver</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">2. We Deliver to Cork</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Free delivery* to Ireland and Northern Ireland</span>
-                  </li>
-                  <li className="flex items-start text-sm text-gray-500">
-                    <span className="ml-8">* Except Made Fresh with 5 & 6 meals</span>
+                    <span className="text-gray-600">Free delivery in Cork on orders over €30</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Not at home? Our nifty packaging will keep everything chilled until you get home</span>
+                    <span className="text-gray-600">Deliveries every Tuesday & Friday to Cork addresses</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Convenient delivery at a place & time that suits you</span>
+                    <span className="text-gray-600">Insulated packaging keeps meals fresh - even if you're out</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-600">Track your order in real-time</span>
                   </li>
                 </ul>
               </div>
@@ -221,19 +229,23 @@ export default async function HomePage() {
                 />
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">You Enjoy</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">3. Heat & Eat</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Cook a tasty dinner in less than 30 minutes with easy to follow step-by-step recipe cards and pre-portioned ingredients</span>
+                    <span className="text-gray-600">Pop it in the microwave or oven - ready in 5-10 minutes</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Or enjoy one of our prepared meals - ready in minutes</span>
+                    <span className="text-gray-600">No chopping, no mess, minimal washing up</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-600">Boost your box with our range of convenient and healthy snacks, juices & smoothies</span>
+                    <span className="text-gray-600">Frozen meals last weeks - fresh meals stay good for 5-7 days</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="w-5 h-5 text-easymeals-green mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-600">Proper food that actually tastes like home cooking</span>
                   </li>
                 </ul>
               </div>
@@ -283,10 +295,10 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              What Our Customers Say
+              What Cork People Are Saying
             </h2>
             <p className="text-xl text-gray-600">
-              Join thousands of happy customers across Ireland
+              Real reviews from real Cork customers
             </p>
           </div>
 
@@ -307,7 +319,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                &quot;We have been using EasyMeals since January this year and love it. It has also brought some variety and fun into our lives trying out new foods and recipes. Everyone helps out with the cooking too because there is a printed recipe that is easy to follow. The freshness and quality of the food is excellent.&quot;
+                &quot;Been using EasyMeals since January and it's brilliant. Between work and the kids' hurling training, I barely had time to cook. Now dinner's sorted in minutes and the quality is savage. The chicken curry is our favourite!&quot;
               </p>
             </div>
 
@@ -327,7 +339,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                &quot;Super happy with EasyMeals! It&apos;s working, and having the meal kits is amazing because it gives us some variety in our life shopping. The quality is excellent and delivery is always on time.&quot;
+                &quot;I'm a student at UCC and these meals are a lifesaver! Way cheaper than Deliveroo and actually healthy. The portions are massive too. My flatmates are all jealous!&quot;
               </p>
             </div>
 
@@ -347,7 +359,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                &quot;Absolutely brilliant service! As a busy mum, EasyMeals has been a lifesaver. The meals are healthy, delicious and my kids actually eat them! The frozen options are perfect for those really hectic days. Highly recommend!&quot;
+                &quot;Working 12-hour shifts at CUH, the last thing I want to do is cook when I get home to Ballincollig. EasyMeals sorted that problem. Tastes like proper home cooking and I don't have to think about it. Game changer!&quot;
               </p>
             </div>
           </div>
@@ -363,17 +375,17 @@ export default async function HomePage() {
         <div className="container mx-auto max-w-4xl px-4 text-center relative z-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-12 shadow-2xl">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              Start Your Meal Delivery Today
+              Try EasyMeals This Week
             </h2>
             <p className="text-xl mb-10 opacity-95 max-w-2xl mx-auto">
-              Join Ireland&apos;s growing community of food lovers enjoying convenient, healthy meals delivered fresh to their door.
+              Join hundreds of Cork families who've ditched the takeaways and switched to real food, made easy. First order? We'll deliver free in Cork.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-white text-orange-600 hover:bg-gray-100 font-bold rounded-full shadow-lg hover:shadow-xl transition-all text-lg px-8">
-                <Link href="/auth/signup">Get Started Now</Link>
+                <Link href="/meals">Browse Meals</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-orange-500 font-bold rounded-full bg-transparent transition-all text-lg px-8">
-                <Link href="/contact">Contact Us</Link>
+                <Link href="/subscriptions">Start Subscription</Link>
               </Button>
             </div>
           </div>

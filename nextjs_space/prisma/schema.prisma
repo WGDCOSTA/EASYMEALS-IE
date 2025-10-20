@@ -238,3 +238,13 @@ enum ContactStatus {
   IN_PROGRESS
   CLOSED
 }
+
+model PageContent {
+  id          String   @id @default(cuid())
+  page        String   @unique // e.g., "homepage", "combos-meals", "kids-meals"
+  content     Json     // Stores editable content as JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("page_contents")
+}
