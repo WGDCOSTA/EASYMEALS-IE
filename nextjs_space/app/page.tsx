@@ -11,6 +11,7 @@ import { ParallaxSection } from '@/components/parallax-section'
 import { FadeInSection } from '@/components/fade-in-section'
 import { AnimatedBackground } from '@/components/animated-background'
 import { prisma } from '@/lib/db'
+import { EditablePageWrapper } from '@/components/editor/editable-page-wrapper'
 
 interface ProductData {
   id: string
@@ -60,8 +61,9 @@ export default async function HomePage() {
   })
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
+    <EditablePageWrapper pageName="homepage">
+      <div className="min-h-screen bg-white">
+        <Header />
       
       {/* Hero Section with Parallax Effect */}
       <ParallaxSection className="relative bg-gradient-to-br from-green-50 via-white to-green-50 py-16" speed={0.3}>
@@ -550,5 +552,6 @@ export default async function HomePage() {
 
       <Footer />
     </div>
+    </EditablePageWrapper>
   )
 }
