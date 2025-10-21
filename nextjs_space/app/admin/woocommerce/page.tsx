@@ -53,8 +53,11 @@ export default function WooCommerceImportPage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/signin');
-    } else if (status === 'authenticated' && (session?.user as any)?.role !== 'ADMIN') {
-      router.push('/');
+    } else if (status === 'authenticated') {
+      const userRole = (session?.user as any)?.role;
+      if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
+        router.push('/');
+      }
     }
   }, [status, session, router]);
 
