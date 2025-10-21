@@ -57,9 +57,12 @@ export function CalorieTracker() {
             fat: data.dailyFat,
           })
         }
+      } else if (response.status === 401) {
+        // User not logged in - use default goals silently
+        return
       }
     } catch (error) {
-      console.error('Error loading profile:', error)
+      // Silent fail for non-logged in users
     }
   }
 
@@ -76,9 +79,12 @@ export function CalorieTracker() {
           totalCarbs: data.totalCarbs || 0,
           totalFat: data.totalFat || 0,
         })
+      } else if (response.status === 401) {
+        // User not logged in - keep zeros
+        return
       }
     } catch (error) {
-      console.error('Error loading daily intake:', error)
+      // Silent fail for non-logged in users
     } finally {
       setLoading(false)
     }

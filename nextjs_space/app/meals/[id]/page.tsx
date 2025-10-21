@@ -14,6 +14,9 @@ import { ProductAccordion } from '@/components/product-accordion'
 import { NutritionValues } from '@/lib/gda-calculator'
 import { CalorieTracker } from '@/components/calorie-tracker'
 import { AIGNutritionPopulator } from '@/components/ai-nutrition-populator'
+import { AnimatedNutritionCircles } from '@/components/animated-nutrition-circles'
+import { MacroBreakdownBar } from '@/components/macro-breakdown-bar'
+import { DetailedNutritionPanel } from '@/components/detailed-nutrition-panel'
 import Link from 'next/link'
 import { TrendingUp, Activity } from 'lucide-react'
 
@@ -130,17 +133,17 @@ export default function MealPage({ params }: MealPageProps) {
       <Header />
       
       {/* Advanced Mode Banner */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+      <div className="bg-gradient-to-r from-purple-600 via-purple-600 to-purple-700 text-white">
         <div className="container mx-auto max-w-7xl px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Activity className="w-5 h-5" />
-              <span className="text-sm font-medium">
+              <Activity className="w-5 h-5 text-white" />
+              <span className="text-sm font-medium text-white">
                 Track your nutrition and plan your meals with our advanced dashboard
               </span>
             </div>
             <Link href="/meals/advanced">
-              <Button variant="secondary" size="sm" className="bg-white text-purple-600 hover:bg-gray-100">
+              <Button variant="secondary" size="sm" className="bg-white text-purple-600 hover:bg-gray-100 flex-shrink-0">
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Open Dashboard
               </Button>
@@ -293,15 +296,49 @@ export default function MealPage({ params }: MealPageProps) {
         </div>
 
             {/* AI Nutrition Populator */}
-            <AIGNutritionPopulator
-              productId={currentProduct.id}
-              productName={currentProduct.name}
-              ingredients={currentProduct.ingredients || undefined}
-            />
+            {!currentProduct.calories && (
+              <AIGNutritionPopulator
+                productId={currentProduct.id}
+                productName={currentProduct.name}
+                ingredients={currentProduct.ingredients || undefined}
+              />
+            )}
+
+            {/* Animated Nutrition Circles - Main Display */}
+            {(currentProduct.calories || currentProduct.protein || currentProduct.carbs || currentProduct.fat) && (
+              <div className="space-y-6">
+                <AnimatedNutritionCircles
+                  nutrition={{
+                    calories: currentProduct.calories,
+                    protein: currentProduct.protein,
+                    carbs: currentProduct.carbs,
+                    fat: currentProduct.fat,
+                    fiber: currentProduct.fiber,
+                  }}
+                  servingWeight={currentProduct.servingWeight || 100}
+                />
+
+                {/* Macro Breakdown Bar */}
+                <MacroBreakdownBar
+                  protein={currentProduct.protein}
+                  carbs={currentProduct.carbs}
+                  fat={currentProduct.fat}
+                />
+
+                {/* Detailed Nutrition Panel */}
+                <DetailedNutritionPanel
+                  energyKj={currentProduct.energyKj}
+                  sugars={currentProduct.sugars}
+                  saturatedFat={currentProduct.saturatedFat}
+                  salt={currentProduct.salt}
+                  servingWeight={currentProduct.servingWeight || 100}
+                />
+              </div>
+            )}
 
             {/* Product Information Accordion */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Information</h2>
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Additional Information</h2>
               <ProductAccordion
                 nutrition={nutrition}
                 servingSize={currentProduct.servingSize || 1}

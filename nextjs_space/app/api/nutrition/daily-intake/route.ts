@@ -10,8 +10,14 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
+    // Return default values for non-logged-in users
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({
+        totalCalories: 0,
+        totalProtein: 0,
+        totalCarbs: 0,
+        totalFat: 0,
+      })
     }
 
     const user = await prisma.user.findUnique({
@@ -19,7 +25,12 @@ export async function GET(request: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({
+        totalCalories: 0,
+        totalProtein: 0,
+        totalCarbs: 0,
+        totalFat: 0,
+      })
     }
 
     const { searchParams } = new URL(request.url)
