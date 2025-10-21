@@ -15,7 +15,8 @@ import {
   Settings,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Database
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -28,6 +29,7 @@ const navigation = [
   { name: 'Affiliates', href: '/admin/affiliates', icon: Users },
   { name: 'Content', href: '/admin/content', icon: FileText },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { name: 'WooCommerce Import', href: '/admin/woocommerce', icon: Database },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 
