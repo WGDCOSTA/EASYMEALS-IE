@@ -84,13 +84,28 @@ model Product {
   stockQuantity   Int             @default(0)
   storageType     StorageType
   allergens       String[]        @default([])
-  calories        Int?
-  protein         Float?
-  carbs           Float?
-  fat             Float?
+  
+  // Enhanced Nutritional Information (EU Standards)
+  calories        Int?            // kcal (same as energyKcal)
+  energyKj        Int?            // Energy in kilojoules (kJ)
+  protein         Float?          // grams
+  carbs           Float?          // grams (total carbohydrates)
+  sugars          Float?          // grams
+  fat             Float?          // grams (total fat)
+  saturatedFat    Float?          // grams
+  fiber           Float?          // grams (fibre)
+  salt            Float?          // grams
+  
   preparationTime Int?            // minutes
-  servingSize     Int?            // servings
+  servingSize     Int?            // number of servings
+  servingWeight   Int?            // weight in grams per serving
+  
   ingredients     String?
+  cookingInstructions String?      @db.Text
+  storageInstructions String?      @db.Text
+  recyclingInfo   String?         @db.Text
+  safetyInfo      String?         @db.Text
+  
   tags            String[]        @default([])  // halal, pasta, kids, student, etc.
   isFeatured      Boolean         @default(false)
   isBestOffer     Boolean         @default(false)
@@ -98,12 +113,21 @@ model Product {
   discount        Int?            // percentage discount
   stockAlert      Int?            // show "only X left" when stock below this
   limitedTimeOffer DateTime?      // show countdown timer
+  
+  // Product Variations Support
+  hasVariations   Boolean         @default(false)
+  parentProductId String?
+  variationType   String?         // e.g., "size", "flavor", "bundle"
+  variationValue  String?         // e.g., "Small", "Medium", "Large"
+  
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   
   orderItems      OrderItem[]
   subscriptionItems SubscriptionItem[]
   sectionProducts SectionProduct[]
+  variations      Product[]       @relation("ProductVariations")
+  parentProduct   Product?        @relation("ProductVariations", fields: [parentProductId], references: [id])
   
   @@map("products")
 }

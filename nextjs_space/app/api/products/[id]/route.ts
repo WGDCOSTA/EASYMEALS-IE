@@ -2,15 +2,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-export const dynamic = "force-dynamic"
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const product = await prisma.product.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: {
+        variations: {
+          where: {
+            isActive: true
+          },
+          orderBy: {
+            price: 'asc'
+          }
+        }
+      }
     })
 
     if (!product) {
@@ -22,9 +30,9 @@ export async function GET(
 
     return NextResponse.json(product)
   } catch (error) {
-    console.error('Product fetch error:', error)
+    console.error('Error fetching product:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch product' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
