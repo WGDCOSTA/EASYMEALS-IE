@@ -3,35 +3,38 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { CalorieTracker } from '@/components/calorie-tracker'
 import { MealPlannerCard } from '@/components/meal-planner-card'
 import { NutritionGoalsCard } from '@/components/nutrition-goals-card'
 import { AiMealSuggestions } from '@/components/ai-meal-suggestions'
 import { WeeklyProgressChart } from '@/components/weekly-progress-chart'
+import { OrderDeliveredBanner } from '@/components/order-delivered-banner'
+import { PurchaseHistoryAnalysis } from '@/components/purchase-history-analysis'
+import { SubscriptionMealPlanner } from '@/components/subscription-meal-planner'
+import { GuestNutritionDashboard } from '@/components/guest-nutrition-dashboard'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Settings, TrendingUp, Calendar, Sparkles } from 'lucide-react'
+import { Settings, TrendingUp, Calendar, Sparkles, History, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function NutritionDashboard() {
   const { data: session, status } = useSession() || {}
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState('today')
+  const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'today')
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin')
-      return
-    }
-
+    // Allow guests to view dashboard (with limited features)
     if (status === 'authenticated') {
       fetchProfile()
+    } else if (status === 'unauthenticated') {
+      setLoading(false)
     }
-  }, [status, router])
+  }, [status])
 
   const fetchProfile = async () => {
     try {
@@ -55,6 +58,33 @@ export default function NutritionDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-easymeals-green"></div>
+      </div>
+    )
+  }
+
+  // Show guest dashboard for non-authenticated users
+  if (!session?.user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+        <div className="bg-white border-b">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+                  <Sparkles className="w-8 h-8 mr-3 text-easymeals-green" />
+                  Nutrition Dashboard
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Track your nutrition goals with AI-powered insights
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8">
+          <GuestNutritionDashboard />
+        </div>
       </div>
     )
   }
@@ -87,19 +117,32 @@ export default function NutritionDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Delivered Order Banner */}
+        <div className="mb-6">
+          <OrderDeliveredBanner />
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl mx-auto">
             <TabsTrigger value="today" className="flex items-center space-x-2">
               <Calendar className="w-4 h-4" />
               <span>Today</span>
             </TabsTrigger>
             <TabsTrigger value="planner" className="flex items-center space-x-2">
-              <TrendingUp className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" />
               <span>Planner</span>
             </TabsTrigger>
             <TabsTrigger value="progress" className="flex items-center space-x-2">
               <TrendingUp className="w-4 h-4" />
               <span>Progress</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center space-x-2">
+              <History className="w-4 h-4" />
+              <span>History</span>
+            </TabsTrigger>
+            <TabsTrigger value="subscription" className="flex items-center space-x-2">
+              <Zap className="w-4 h-4" />
+              <span>Auto-Plan</span>
             </TabsTrigger>
           </TabsList>
 
@@ -179,6 +222,16 @@ export default function NutritionDashboard() {
                 </div>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* History Tab */}
+          <TabsContent value="history" className="space-y-6">
+            <PurchaseHistoryAnalysis />
+          </TabsContent>
+
+          {/* Subscription Tab */}
+          <TabsContent value="subscription" className="space-y-6">
+            <SubscriptionMealPlanner />
           </TabsContent>
         </Tabs>
       </div>

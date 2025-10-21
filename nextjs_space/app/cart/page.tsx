@@ -9,6 +9,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { useCartStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
+import { CartNutritionPreview } from '@/components/cart-nutrition-preview'
 import Image from 'next/image'
 
 export default function CartPage() {
@@ -159,8 +160,11 @@ export default function CartPage() {
             </div>
           </div>
 
-          {/* Order Summary */}
-          <div>
+          {/* Order Summary and Nutrition */}
+          <div className="space-y-6">
+            {/* Nutrition Preview */}
+            <CartNutritionPreview />
+            
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Order Summary</h3>
               
