@@ -12,6 +12,10 @@ import { Footer } from '@/components/footer'
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { ProductAccordion } from '@/components/product-accordion'
 import { NutritionValues } from '@/lib/gda-calculator'
+import { CalorieTracker } from '@/components/calorie-tracker'
+import { AIGNutritionPopulator } from '@/components/ai-nutrition-populator'
+import Link from 'next/link'
+import { TrendingUp, Activity } from 'lucide-react'
 
 interface Product {
   id: string
@@ -122,13 +126,36 @@ export default function MealPage({ params }: MealPageProps) {
     : undefined
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="container mx-auto max-w-6xl px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="relative">
+      {/* Advanced Mode Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+        <div className="container mx-auto max-w-7xl px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Activity className="w-5 h-5" />
+              <span className="text-sm font-medium">
+                Track your nutrition and plan your meals with our advanced dashboard
+              </span>
+            </div>
+            <Link href="/meals/advanced">
+              <Button variant="secondary" size="sm" className="bg-white text-purple-600 hover:bg-gray-100">
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Open Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content - 2 columns */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Product Image */}
+              <div className="relative">
             <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden">
               <Image
                 src={currentProduct.imageUrl}
@@ -265,20 +292,36 @@ export default function MealPage({ params }: MealPageProps) {
           </div>
         </div>
 
-        {/* Product Information Accordion */}
-        <div className="mt-12 max-w-4xl">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Information</h2>
-          <ProductAccordion
-            nutrition={nutrition}
-            servingSize={currentProduct.servingSize || 1}
-            servingWeight={currentProduct.servingWeight || 300}
-            storageType={currentProduct.storageType}
-            cookingInstructions={currentProduct.cookingInstructions || undefined}
-            storageInstructions={currentProduct.storageInstructions || undefined}
-            recyclingInfo={currentProduct.recyclingInfo || undefined}
-            safetyInfo={currentProduct.safetyInfo || undefined}
-            allergens={currentProduct.allergens}
-          />
+            {/* AI Nutrition Populator */}
+            <AIGNutritionPopulator
+              productId={currentProduct.id}
+              productName={currentProduct.name}
+              ingredients={currentProduct.ingredients || undefined}
+            />
+
+            {/* Product Information Accordion */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Information</h2>
+              <ProductAccordion
+                nutrition={nutrition}
+                servingSize={currentProduct.servingSize || 1}
+                servingWeight={currentProduct.servingWeight || 300}
+                storageType={currentProduct.storageType}
+                cookingInstructions={currentProduct.cookingInstructions || undefined}
+                storageInstructions={currentProduct.storageInstructions || undefined}
+                recyclingInfo={currentProduct.recyclingInfo || undefined}
+                safetyInfo={currentProduct.safetyInfo || undefined}
+                allergens={currentProduct.allergens}
+              />
+            </div>
+          </div>
+
+          {/* Sidebar - Calorie Tracker */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              <CalorieTracker />
+            </div>
+          </div>
         </div>
       </div>
       
