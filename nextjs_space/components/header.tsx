@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { ShoppingCart, Menu, X, User, LogOut, Heart } from 'lucide-react'
+import { ShoppingCart, Menu, X, User, LogOut, Heart, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useCartStore } from '@/lib/store'
+import { useEditor } from '@/contexts/editor/editor-context'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -21,7 +22,19 @@ export function Header() {
   const { data: session, status } = useSession() || {}
   const { items } = useCartStore()
   
+  // Check if we're in an editor context
+  let isEditing = false
+  let setIsEditing: ((value: boolean) => void) | null = null
+  try {
+    const editor = useEditor()
+    isEditing = editor.isEditing
+    setIsEditing = editor.setIsEditing
+  } catch {
+    // Not in editor context, that's fine
+  }
+  
   const itemCount = items?.reduce((total, item) => total + (item?.quantity || 0), 0) || 0
+  const isAdmin = session?.user && ((session.user as any).role === 'SUPER_ADMIN' || (session.user as any).role === 'ADMIN')
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b">
@@ -126,13 +139,29 @@ export function Header() {
                           My Subscriptions
                         </Link>
                         {((session.user as any)?.role === 'ADMIN' || (session.user as any)?.role === 'SUPER_ADMIN') && (
-                          <Link 
-                            href="/admin/dashboard" 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setUserDropdownOpen(false)}
-                          >
-                            Admin Dashboard
-                          </Link>
+                          <>
+                            <Link 
+                              href="/admin/dashboard" 
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setUserDropdownOpen(false)}
+                            >
+                              Admin Dashboard
+                            </Link>
+                            {setIsEditing !== null && (
+                              <button
+                                onClick={() => {
+                                  setUserDropdownOpen(false)
+                                  if (setIsEditing) {
+                                    setIsEditing(!isEditing)
+                                  }
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                              >
+                                <Edit3 className="h-4 w-4 mr-2" />
+                                {isEditing ? 'Exit Editor' : 'Edit Page'}
+                              </button>
+                            )}
+                          </>
                         )}
                         <button
                           onClick={() => {
