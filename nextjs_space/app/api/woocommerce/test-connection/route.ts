@@ -1,11 +1,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { getWooCommerceClient } from '@/lib/woocommerce';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userRole = (session?.user as any)?.role;
     
     if (!session || (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN')) {

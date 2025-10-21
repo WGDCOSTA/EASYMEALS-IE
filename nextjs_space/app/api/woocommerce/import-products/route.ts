@@ -1,13 +1,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { getWooCommerceClient, WooProduct, WooCategory } from '@/lib/woocommerce';
 import { prisma } from '@/lib/db';
 import { ProductCategory, StorageType } from '@prisma/client';
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     const userRole = (session?.user as any)?.role;
     
     if (!session || (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN')) {
