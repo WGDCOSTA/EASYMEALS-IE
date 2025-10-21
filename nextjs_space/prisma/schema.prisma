@@ -59,6 +59,9 @@ model User {
   orders        Order[]
   subscriptions Subscription[]
   contacts      Contact[]
+  nutritionProfile NutritionProfile?
+  mealPlans     MealPlan[]
+  dailyIntakes  DailyIntake[]
   
   @@map("users")
 }
@@ -128,6 +131,7 @@ model Product {
   sectionProducts SectionProduct[]
   variations      Product[]       @relation("ProductVariations")
   parentProduct   Product?        @relation("ProductVariations", fields: [parentProductId], references: [id])
+  meals           Meal[]
   
   @@map("products")
 }
@@ -384,4 +388,131 @@ enum PayoutStatus {
   PROCESSING
   COMPLETED
   FAILED
+}
+
+// Nutrition & Meal Planning Models
+model NutritionProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  
+  // Goals
+  dailyCalories   Int      @default(2000)
+  dailyProtein    Float    @default(60)
+  dailyCarbs      Float    @default(225)
+  dailyFat        Float    @default(77)
+  
+  // Preferences
+  dietaryPreferences String[] @default([])  // vegetarian, halal, low-carb, etc.
+  allergies       String[] @default([])
+  activityLevel   ActivityLevel @default(MODERATE)
+  goal            NutritionGoal @default(MAINTAIN)
+  
+  // User info
+  age             Int?
+  weight          Float?   // in kg
+  height          Float?   // in cm
+  gender          Gender?
+  
+  // AI Preferences
+  useAiSuggestions Boolean @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("nutrition_profiles")
+}
+
+model MealPlan {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String   @default("My Meal Plan")
+  date            DateTime
+  isActive        Boolean  @default(true)
+  isAiGenerated   Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals           Meal[]
+  
+  @@map("meal_plans")
+}
+
+model Meal {
+  id              String   @id @default(cuid())
+  mealPlanId      String
+  productId       String
+  mealType        MealType
+  servings        Float    @default(1)
+  scheduledTime   String?  // e.g., "08:00", "13:00", "18:00"
+  
+  // Cached nutrition data for the meal
+  calories        Int?
+  protein         Float?
+  carbs           Float?
+  fat             Float?
+  
+  notes           String?
+  completed       Boolean  @default(false)
+  completedAt     DateTime?
+  
+  createdAt       DateTime @default(now())
+  
+  mealPlan        MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  product         Product  @relation(fields: [productId], references: [id])
+  
+  @@map("meals")
+}
+
+model DailyIntake {
+  id              String   @id @default(cuid())
+  userId          String
+  date            DateTime
+  
+  // Total intake for the day
+  totalCalories   Int      @default(0)
+  totalProtein    Float    @default(0)
+  totalCarbs      Float    @default(0)
+  totalFat        Float    @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, date])
+  @@map("daily_intakes")
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum NutritionGoal {
+  LOSE_WEIGHT
+  MAINTAIN
+  GAIN_MUSCLE
+  IMPROVE_HEALTH
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MealType {
+  BREAKFAST
+  MORNING_SNACK
+  LUNCH
+  AFTERNOON_SNACK
+  DINNER
+  EVENING_SNACK
 }

@@ -15,10 +15,10 @@ interface NutritionGoals {
 }
 
 interface DailyIntake {
-  calories: number
-  protein: number
-  carbs: number
-  fat: number
+  totalCalories: number
+  totalProtein: number
+  totalCarbs: number
+  totalFat: number
 }
 
 const DEFAULT_GOALS: NutritionGoals = {
@@ -29,24 +29,60 @@ const DEFAULT_GOALS: NutritionGoals = {
 }
 
 export function CalorieTracker() {
-  const [goals] = useState<NutritionGoals>(DEFAULT_GOALS)
+  const [goals, setGoals] = useState<NutritionGoals>(DEFAULT_GOALS)
   const [dailyIntake, setDailyIntake] = useState<DailyIntake>({
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0
+    totalCalories: 0,
+    totalProtein: 0,
+    totalCarbs: 0,
+    totalFat: 0
   })
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Load daily intake from localStorage
-    const savedIntake = localStorage.getItem(`intake-${selectedDate.toDateString()}`)
-    if (savedIntake) {
-      setDailyIntake(JSON.parse(savedIntake))
-    } else {
-      setDailyIntake({ calories: 0, protein: 0, carbs: 0, fat: 0 })
-    }
+    loadProfile()
+    loadDailyIntake()
   }, [selectedDate])
+
+  const loadProfile = async () => {
+    try {
+      const response = await fetch('/api/nutrition/profile')
+      if (response.ok) {
+        const data = await response.json()
+        if (data) {
+          setGoals({
+            calories: data.dailyCalories,
+            protein: data.dailyProtein,
+            carbs: data.dailyCarbs,
+            fat: data.dailyFat,
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error)
+    }
+  }
+
+  const loadDailyIntake = async () => {
+    setLoading(true)
+    try {
+      const dateStr = selectedDate.toISOString().split('T')[0]
+      const response = await fetch(`/api/nutrition/daily-intake?date=${dateStr}`)
+      if (response.ok) {
+        const data = await response.json()
+        setDailyIntake({
+          totalCalories: data.totalCalories || 0,
+          totalProtein: data.totalProtein || 0,
+          totalCarbs: data.totalCarbs || 0,
+          totalFat: data.totalFat || 0,
+        })
+      }
+    } catch (error) {
+      console.error('Error loading daily intake:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getProgressColor = (current: number, goal: number) => {
     const percentage = (current / goal) * 100
@@ -130,13 +166,13 @@ export function CalorieTracker() {
               stroke="white"
               strokeWidth="12"
               fill="none"
-              strokeDasharray={`${(dailyIntake.calories / goals.calories) * 502} 502`}
+              strokeDasharray={`${(dailyIntake.totalCalories / goals.calories) * 502} 502`}
               strokeLinecap="round"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Flame className="w-8 h-8 mb-2" />
-            <div className="text-4xl font-bold">{dailyIntake.calories}</div>
+            <div className="text-4xl font-bold">{dailyIntake.totalCalories}</div>
             <div className="text-sm opacity-80">Calories</div>
             <div className="text-xs opacity-60">Goal {goals.calories}</div>
           </div>
@@ -151,12 +187,12 @@ export function CalorieTracker() {
               <TrendingUp className="w-4 h-4 mr-1" />
               Protein
             </span>
-            <span className="text-sm font-bold">{dailyIntake.protein}g / {goals.protein}g</span>
+            <span className="text-sm font-bold">{Math.round(dailyIntake.totalProtein)}g / {goals.protein}g</span>
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <div 
               className="h-full bg-yellow-400 transition-all duration-500"
-              style={{ width: `${Math.min((dailyIntake.protein / goals.protein) * 100, 100)}%` }}
+              style={{ width: `${Math.min((dailyIntake.totalProtein / goals.protein) * 100, 100)}%` }}
             />
           </div>
         </div>
@@ -164,12 +200,12 @@ export function CalorieTracker() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Carb</span>
-            <span className="text-sm font-bold">{dailyIntake.carbs}g / {goals.carbs}g</span>
+            <span className="text-sm font-bold">{Math.round(dailyIntake.totalCarbs)}g / {goals.carbs}g</span>
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <div 
               className="h-full bg-green-400 transition-all duration-500"
-              style={{ width: `${Math.min((dailyIntake.carbs / goals.carbs) * 100, 100)}%` }}
+              style={{ width: `${Math.min((dailyIntake.totalCarbs / goals.carbs) * 100, 100)}%` }}
             />
           </div>
         </div>
@@ -177,12 +213,12 @@ export function CalorieTracker() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Fat</span>
-            <span className="text-sm font-bold">{dailyIntake.fat}g / {goals.fat}g</span>
+            <span className="text-sm font-bold">{Math.round(dailyIntake.totalFat)}g / {goals.fat}g</span>
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <div 
               className="h-full bg-pink-400 transition-all duration-500"
-              style={{ width: `${Math.min((dailyIntake.fat / goals.fat) * 100, 100)}%` }}
+              style={{ width: `${Math.min((dailyIntake.totalFat / goals.fat) * 100, 100)}%` }}
             />
           </div>
         </div>
