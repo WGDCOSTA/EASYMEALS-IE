@@ -29,6 +29,15 @@ export default function AnalyticsPage() {
     try {
       const res = await fetch('/api/admin/analytics')
       const analyticsData = await res.json()
+      
+      // Check if the response contains an error
+      if (analyticsData.error || !analyticsData.revenueStats) {
+        console.error('Analytics error:', analyticsData.error || 'Invalid data structure')
+        setData(null)
+        setLoading(false)
+        return
+      }
+      
       setData(analyticsData)
       setLoading(false)
     } catch (error) {
@@ -41,10 +50,13 @@ export default function AnalyticsPage() {
     return <div className="flex items-center justify-center min-h-[400px]">Loading analytics...</div>
   }
 
-  if (!data) {
+  if (!data || !data.revenueStats) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg text-red-600">Failed to load analytics</div>
+        <div className="text-center">
+          <div className="text-lg text-red-600 mb-2">Failed to load analytics</div>
+          <p className="text-sm text-gray-500">Please make sure you are signed in as an admin</p>
+        </div>
       </div>
     )
   }
@@ -127,7 +139,7 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {data.salesByCategory.length === 0 ? (
+              {!data.salesByCategory || data.salesByCategory.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-8">No data available</p>
               ) : (
                 data.salesByCategory.map((cat) => {
@@ -165,7 +177,7 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {data.topCustomers.length === 0 ? (
+              {!data.topCustomers || data.topCustomers.length === 0 ? (
                 <p className="text-sm text-gray-500 text-center py-8">No data available</p>
               ) : (
                 data.topCustomers.map((customer, index) => (
@@ -197,7 +209,7 @@ export default function AnalyticsPage() {
           <CardTitle>Sales Over Time (Last 30 Days)</CardTitle>
         </CardHeader>
         <CardContent>
-          {data.salesByDay.length === 0 ? (
+          {!data.salesByDay || data.salesByDay.length === 0 ? (
             <p className="text-sm text-gray-500 text-center py-8">No data available</p>
           ) : (
             <div className="space-y-2">
