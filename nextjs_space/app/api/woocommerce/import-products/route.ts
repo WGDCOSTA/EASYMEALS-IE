@@ -147,8 +147,11 @@ export async function POST(req: NextRequest) {
         const tags = extractTags(wooProduct);
         
         const productData = {
+          woocommerceId: wooProduct.id,
+          sku: wooProduct.sku || null,
           name: wooProduct.name,
-          description: wooProduct.short_description || wooProduct.description || '',
+          description: wooProduct.description || wooProduct.short_description || '',
+          shortDescription: wooProduct.short_description || null,
           price: parseFloat(wooProduct.price) || 0,
           originalPrice: wooProduct.regular_price ? parseFloat(wooProduct.regular_price) : null,
           imageUrl: wooProduct.images && wooProduct.images[0] ? wooProduct.images[0].src : '/placeholder-image.jpg',
@@ -157,6 +160,10 @@ export async function POST(req: NextRequest) {
           stockQuantity: wooProduct.stock_quantity || 0,
           storageType: StorageType.FRESH_CHILLED, // Default, can be customized
           allergens: [],
+          weight: wooProduct.weight ? parseFloat(wooProduct.weight) : null,
+          dimensions: wooProduct.dimensions 
+            ? `${wooProduct.dimensions.length}x${wooProduct.dimensions.width}x${wooProduct.dimensions.height}`
+            : null,
           ...nutrition,
           tags,
           isFeatured: wooProduct.featured,
@@ -165,26 +172,58 @@ export async function POST(req: NextRequest) {
             : null,
         };
 
-        // Check if product already exists (by name or we could use SKU)
+        // Check if product already exists by WooCommerce ID or name
         const existingProduct = await prisma.product.findFirst({
           where: {
-            name: wooProduct.name,
+            OR: [
+              { woocommerceId: wooProduct.id },
+              { name: wooProduct.name }
+            ]
           },
         });
 
+        let product;
         if (existingProduct) {
           // Update existing product
-          await prisma.product.update({
+          product = await prisma.product.update({
             where: { id: existingProduct.id },
             data: productData,
           });
           updated++;
         } else {
           // Create new product
-          await prisma.product.create({
+          product = await prisma.product.create({
             data: productData,
           });
           imported++;
+        }
+
+        // Handle multiple categories
+        if (wooProduct.categories && wooProduct.categories.length > 0) {
+          // Remove existing category relations
+          await prisma.productCategoryRelation.deleteMany({
+            where: { productId: product.id }
+          });
+
+          // Add new category relations
+          for (let i = 0; i < wooProduct.categories.length; i++) {
+            const wooCategory = wooProduct.categories[i];
+            
+            // Find category by WooCommerce ID
+            const category = await prisma.category.findUnique({
+              where: { woocommerceId: wooCategory.id }
+            });
+
+            if (category) {
+              await prisma.productCategoryRelation.create({
+                data: {
+                  productId: product.id,
+                  categoryId: category.id,
+                  isPrimary: i === 0 // First category is primary
+                }
+              });
+            }
+          }
         }
       } catch (error) {
         console.error(`Error importing product ${wooProduct.name}:`, error);

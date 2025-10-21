@@ -16,13 +16,23 @@ interface ProductFormProps {
   productId?: string
 }
 
+interface Category {
+  id: string
+  name: string
+  slug: string
+}
+
 export default function ProductForm({ productId }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [primaryCategoryId, setPrimaryCategoryId] = useState<string>('')
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    shortDescription: '',
     price: '',
     imageUrl: '',
     category: 'TRADITIONAL_IRISH',
@@ -36,14 +46,28 @@ export default function ProductForm({ productId }: ProductFormProps) {
     fat: '',
     preparationTime: '',
     servingSize: '',
-    ingredients: ''
+    ingredients: '',
+    sku: '',
+    weight: '',
+    dimensions: ''
   })
 
   useEffect(() => {
+    loadCategories()
     if (productId) {
       loadProduct()
     }
   }, [productId])
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetch('/api/admin/categories')
+      const data = await res.json()
+      setCategories(data)
+    } catch (error) {
+      console.error('Failed to load categories:', error)
+    }
+  }
 
   const loadProduct = async () => {
     try {
@@ -52,6 +76,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
       setFormData({
         name: data.name,
         description: data.description,
+        shortDescription: data.shortDescription || '',
         price: data.price.toString(),
         imageUrl: data.imageUrl,
         category: data.category,
@@ -65,9 +90,23 @@ export default function ProductForm({ productId }: ProductFormProps) {
         fat: data.fat?.toString() || '',
         preparationTime: data.preparationTime?.toString() || '',
         servingSize: data.servingSize?.toString() || '',
-        ingredients: data.ingredients || ''
+        ingredients: data.ingredients || '',
+        sku: data.sku || '',
+        weight: data.weight?.toString() || '',
+        dimensions: data.dimensions || ''
       })
       setImagePreview(data.imageUrl)
+      
+      // Load product categories
+      if (data.productCategories && data.productCategories.length > 0) {
+        const categoryIds = data.productCategories.map((pc: any) => pc.categoryId)
+        setSelectedCategories(categoryIds)
+        
+        const primary = data.productCategories.find((pc: any) => pc.isPrimary)
+        if (primary) {
+          setPrimaryCategoryId(primary.categoryId)
+        }
+      }
     } catch (error) {
       console.error('Failed to load product:', error)
     }
@@ -91,7 +130,12 @@ export default function ProductForm({ productId }: ProductFormProps) {
         carbs: formData.carbs ? parseFloat(formData.carbs) : null,
         fat: formData.fat ? parseFloat(formData.fat) : null,
         preparationTime: formData.preparationTime ? parseInt(formData.preparationTime) : null,
-        servingSize: formData.servingSize ? parseInt(formData.servingSize) : null
+        servingSize: formData.servingSize ? parseInt(formData.servingSize) : null,
+        weight: formData.weight ? parseFloat(formData.weight) : null,
+        categories: selectedCategories.map(categoryId => ({
+          categoryId,
+          isPrimary: categoryId === primaryCategoryId
+        }))
       }
 
       const res = await fetch(url, {
@@ -113,6 +157,22 @@ export default function ProductForm({ productId }: ProductFormProps) {
     }
   }
 
+  const toggleCategory = (categoryId: string) => {
+    if (selectedCategories.includes(categoryId)) {
+      setSelectedCategories(selectedCategories.filter(id => id !== categoryId))
+      if (primaryCategoryId === categoryId) {
+        setPrimaryCategoryId('')
+      }
+    } else {
+      const newCategories = [...selectedCategories, categoryId]
+      setSelectedCategories(newCategories)
+      // Set as primary if it's the first category
+      if (newCategories.length === 1) {
+        setPrimaryCategoryId(categoryId)
+      }
+    }
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     const checked = (e.target as HTMLInputElement).checked
@@ -127,7 +187,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
     }
   }
 
-  const categories = [
+  const legacyCategories = [
     { value: 'TRADITIONAL_IRISH', label: 'Traditional Irish' },
     { value: 'INTERNATIONAL', label: 'International' },
     { value: 'HEALTHY', label: 'Healthy' },
@@ -192,7 +252,19 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Description *</Label>
+                  <Label htmlFor="shortDescription">Short Description</Label>
+                  <Textarea
+                    id="shortDescription"
+                    name="shortDescription"
+                    value={formData.shortDescription}
+                    onChange={handleChange}
+                    rows={2}
+                    placeholder="Brief product summary..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Full Description *</Label>
                   <Textarea
                     id="description"
                     name="description"
@@ -213,6 +285,43 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     rows={3}
                     placeholder="List all ingredients..."
                   />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div>
+                    <Label htmlFor="sku">SKU</Label>
+                    <Input
+                      id="sku"
+                      name="sku"
+                      value={formData.sku}
+                      onChange={handleChange}
+                      placeholder="Product SKU"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Input
+                      id="weight"
+                      name="weight"
+                      type="number"
+                      step="0.01"
+                      value={formData.weight}
+                      onChange={handleChange}
+                      placeholder="0.5"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="dimensions">Dimensions</Label>
+                    <Input
+                      id="dimensions"
+                      name="dimensions"
+                      value={formData.dimensions}
+                      onChange={handleChange}
+                      placeholder="10x20x30 cm"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -242,38 +351,95 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor="category">Category *</Label>
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1c7430]"
-                      required
-                    >
-                      {categories.map(cat => (
-                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <Label htmlFor="storageType">Storage Type *</Label>
+                  <select
+                    id="storageType"
+                    name="storageType"
+                    value={formData.storageType}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1c7430] bg-white dark:bg-gray-800"
+                    required
+                  >
+                    {storageTypes.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </CardContent>
+            </Card>
 
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Categories</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Select Categories (Multiple) *</Label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Choose one or more categories for this product
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                    {categories.map(category => (
+                      <label key={category.id} className="flex items-start space-x-2 cursor-pointer p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category.id)}
+                          onChange={() => toggleCategory(category.id)}
+                          className="mt-0.5 rounded border-gray-300 text-[#1c7430] focus:ring-[#1c7430]"
+                        />
+                        <span className="text-sm">{category.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {selectedCategories.length === 0 && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Please select at least one category
+                    </p>
+                  )}
+                </div>
+
+                {selectedCategories.length > 0 && (
                   <div>
-                    <Label htmlFor="storageType">Storage Type *</Label>
+                    <Label>Primary Category *</Label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      The main category for this product
+                    </p>
                     <select
-                      id="storageType"
-                      name="storageType"
-                      value={formData.storageType}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1c7430]"
+                      value={primaryCategoryId}
+                      onChange={(e) => setPrimaryCategoryId(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1c7430] bg-white dark:bg-gray-800"
                       required
                     >
-                      {storageTypes.map(type => (
-                        <option key={type.value} value={type.value}>{type.label}</option>
-                      ))}
+                      <option value="">Select primary category</option>
+                      {selectedCategories.map(catId => {
+                        const category = categories.find(c => c.id === catId)
+                        return category ? (
+                          <option key={catId} value={catId}>
+                            {category.name}
+                          </option>
+                        ) : null
+                      })}
                     </select>
                   </div>
+                )}
+
+                <div>
+                  <Label htmlFor="category">Legacy Category (for compatibility)</Label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1c7430] bg-white dark:bg-gray-800"
+                  >
+                    {legacyCategories.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Used for backward compatibility with existing features
+                  </p>
                 </div>
               </CardContent>
             </Card>

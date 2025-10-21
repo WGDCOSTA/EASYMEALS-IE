@@ -47,8 +47,12 @@ export default function WooCommerceImportPage() {
   
   const [importingProducts, setImportingProducts] = useState(false);
   const [importingOrders, setImportingOrders] = useState(false);
+  const [syncingCategories, setSyncingCategories] = useState(false);
+  const [resyncingProducts, setResyncingProducts] = useState(false);
   const [productsResult, setProductsResult] = useState<ImportResult | null>(null);
   const [ordersResult, setOrdersResult] = useState<ImportResult | null>(null);
+  const [categoriesResult, setCategoriesResult] = useState<ImportResult | null>(null);
+  const [resyncResult, setResyncResult] = useState<ImportResult | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -136,6 +140,48 @@ export default function WooCommerceImportPage() {
       });
     } finally {
       setImportingOrders(false);
+    }
+  };
+
+  const handleSyncCategories = async () => {
+    setSyncingCategories(true);
+    setCategoriesResult(null);
+    
+    try {
+      const response = await fetch('/api/woocommerce/sync-categories', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      setCategoriesResult(data);
+    } catch (error: any) {
+      setCategoriesResult({
+        success: false,
+        error: error.message || 'Failed to sync categories',
+      });
+    } finally {
+      setSyncingCategories(false);
+    }
+  };
+
+  const handleResyncProducts = async () => {
+    setResyncingProducts(true);
+    setResyncResult(null);
+    
+    try {
+      const response = await fetch('/api/woocommerce/resync-products', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      setResyncResult(data);
+    } catch (error: any) {
+      setResyncResult({
+        success: false,
+        error: error.message || 'Failed to resync products',
+      });
+    } finally {
+      setResyncingProducts(false);
     }
   };
 
@@ -239,6 +285,86 @@ export default function WooCommerceImportPage() {
       </Card>
 
       <div className="grid md:grid-cols-2 gap-6">
+        {/* Sync Categories */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Sync Categories
+            </CardTitle>
+            <CardDescription>
+              Sync categories from WooCommerce
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                This will sync all product categories from WooCommerce including:
+              </p>
+              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                <li>Category names and slugs</li>
+                <li>Category descriptions and images</li>
+                <li>Category hierarchy (parent/child)</li>
+              </ul>
+              <p className="text-sm font-medium text-orange-600 mt-2">
+                ⚠️ Run this BEFORE importing products for proper category assignment!
+              </p>
+            </div>
+
+            <Button
+              onClick={handleSyncCategories}
+              disabled={!isConnected || syncingCategories}
+              className="w-full"
+              variant="outline"
+            >
+              {syncingCategories ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Sync Categories
+                </>
+              )}
+            </Button>
+
+            {categoriesResult && (
+              <Alert variant={categoriesResult.success ? 'default' : 'destructive'}>
+                {categoriesResult.success ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <XCircle className="h-4 w-4" />
+                )}
+                <AlertDescription>
+                  {categoriesResult.success ? (
+                    <div className="space-y-2">
+                      <p className="font-medium">{categoriesResult.message}</p>
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="secondary">
+                          Total: {categoriesResult.total}
+                        </Badge>
+                        <Badge variant="default" className="bg-green-600">
+                          Imported: {categoriesResult.imported}
+                        </Badge>
+                        <Badge variant="default" className="bg-blue-600">
+                          Updated: {categoriesResult.updated}
+                        </Badge>
+                        <Badge variant="outline">
+                          Skipped: {categoriesResult.skipped}
+                        </Badge>
+                      </div>
+                    </div>
+                  ) : (
+                    <p>{categoriesResult.error}</p>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Import Products */}
         <Card>
           <CardHeader>
@@ -258,7 +384,7 @@ export default function WooCommerceImportPage() {
               <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                 <li>Product name, description, and images</li>
                 <li>Pricing and stock information</li>
-                <li>Categories and tags</li>
+                <li>Multiple categories assignment</li>
                 <li>Nutritional information (if available)</li>
               </ul>
             </div>
@@ -309,6 +435,86 @@ export default function WooCommerceImportPage() {
                     </div>
                   ) : (
                     <p>{productsResult.error}</p>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Resync Products */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RefreshCw className="h-5 w-5" />
+              Re-sync Products
+            </CardTitle>
+            <CardDescription>
+              Update existing products with missing WooCommerce data
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                This will update existing products with:
+              </p>
+              <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                <li>Missing descriptions and short descriptions</li>
+                <li>WooCommerce ID, SKU, weight, dimensions</li>
+                <li>Updated categories (multiple categories)</li>
+                <li>Latest pricing and stock information</li>
+              </ul>
+              <p className="text-sm font-medium text-blue-600 mt-2">
+                ℹ️ Use this to update products with missing fields after initial import
+              </p>
+            </div>
+
+            <Button
+              onClick={handleResyncProducts}
+              disabled={!isConnected || resyncingProducts}
+              className="w-full"
+              variant="outline"
+            >
+              {resyncingProducts ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Re-syncing...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Re-sync Products
+                </>
+              )}
+            </Button>
+
+            {resyncResult && (
+              <Alert variant={resyncResult.success ? 'default' : 'destructive'}>
+                {resyncResult.success ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <XCircle className="h-4 w-4" />
+                )}
+                <AlertDescription>
+                  {resyncResult.success ? (
+                    <div className="space-y-2">
+                      <p className="font-medium">{resyncResult.message}</p>
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="secondary">
+                          Total: {resyncResult.total}
+                        </Badge>
+                        <Badge variant="default" className="bg-blue-600">
+                          Updated: {resyncResult.updated}
+                        </Badge>
+                        {resyncResult.error && (
+                          <Badge variant="destructive">
+                            Errors: {resyncResult.error}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p>{resyncResult.error}</p>
                   )}
                 </AlertDescription>
               </Alert>

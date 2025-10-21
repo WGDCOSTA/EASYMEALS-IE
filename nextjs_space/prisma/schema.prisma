@@ -78,15 +78,22 @@ model VerificationToken {
 model Product {
   id              String          @id @default(cuid())
   name            String
-  description     String
+  description     String          @db.Text
+  shortDescription String?        @db.Text
   price           Float
   originalPrice   Float?          // For showing discounts
   imageUrl        String
-  category        ProductCategory
+  category        ProductCategory // Legacy field, kept for compatibility
   isActive        Boolean         @default(true)
   stockQuantity   Int             @default(0)
   storageType     StorageType
   allergens       String[]        @default([])
+  
+  // WooCommerce Integration Fields
+  woocommerceId   Int?            @unique
+  sku             String?         @unique
+  weight          Float?          // Product weight
+  dimensions      String?         // Dimensions as string (e.g., "10x20x30")
   
   // Enhanced Nutritional Information (EU Standards)
   calories        Int?            // kcal (same as energyKcal)
@@ -103,7 +110,7 @@ model Product {
   servingSize     Int?            // number of servings
   servingWeight   Int?            // weight in grams per serving
   
-  ingredients     String?
+  ingredients     String?         @db.Text
   cookingInstructions String?      @db.Text
   storageInstructions String?      @db.Text
   recyclingInfo   String?         @db.Text
@@ -132,8 +139,46 @@ model Product {
   variations      Product[]       @relation("ProductVariations")
   parentProduct   Product?        @relation("ProductVariations", fields: [parentProductId], references: [id])
   meals           Meal[]
+  productCategories ProductCategoryRelation[]
   
   @@map("products")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  imageUrl    String?
+  parentId    String?
+  isActive    Boolean  @default(true)
+  displayOrder Int     @default(0)
+  
+  // WooCommerce Integration
+  woocommerceId Int?   @unique
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  productCategories ProductCategoryRelation[]
+  
+  @@map("categories")
+}
+
+model ProductCategoryRelation {
+  id         String   @id @default(cuid())
+  productId  String
+  categoryId String
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, categoryId])
+  @@map("product_categories")
 }
 
 model DeliveryZone {

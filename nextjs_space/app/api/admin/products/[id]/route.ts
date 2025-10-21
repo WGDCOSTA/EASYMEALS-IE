@@ -18,7 +18,14 @@ export async function GET(
     }
 
     const product = await prisma.product.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: {
+        productCategories: {
+          include: {
+            category: true
+          }
+        }
+      }
     })
 
     if (!product) {
@@ -53,6 +60,7 @@ export async function PUT(
       data: {
         name: data.name,
         description: data.description,
+        shortDescription: data.shortDescription || null,
         price: data.price,
         imageUrl: data.imageUrl,
         category: data.category,
@@ -66,9 +74,31 @@ export async function PUT(
         fat: data.fat,
         preparationTime: data.preparationTime,
         servingSize: data.servingSize,
-        ingredients: data.ingredients
+        ingredients: data.ingredients,
+        sku: data.sku || null,
+        weight: data.weight || null,
+        dimensions: data.dimensions || null
       }
     })
+
+    // Handle categories if provided
+    if (data.categories && Array.isArray(data.categories)) {
+      // Remove existing category relations
+      await prisma.productCategoryRelation.deleteMany({
+        where: { productId: params.id }
+      })
+
+      // Add new category relations
+      for (const categoryData of data.categories) {
+        await prisma.productCategoryRelation.create({
+          data: {
+            productId: params.id,
+            categoryId: categoryData.categoryId,
+            isPrimary: categoryData.isPrimary || false
+          }
+        })
+      }
+    }
 
     return NextResponse.json(product)
   } catch (error) {

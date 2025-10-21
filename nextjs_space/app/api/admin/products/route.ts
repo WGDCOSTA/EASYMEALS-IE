@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         description: data.description,
+        shortDescription: data.shortDescription || null,
         price: data.price,
         imageUrl: data.imageUrl,
         category: data.category,
@@ -55,9 +56,25 @@ export async function POST(request: NextRequest) {
         fat: data.fat,
         preparationTime: data.preparationTime,
         servingSize: data.servingSize,
-        ingredients: data.ingredients
+        ingredients: data.ingredients,
+        sku: data.sku || null,
+        weight: data.weight || null,
+        dimensions: data.dimensions || null
       }
     })
+
+    // Handle categories if provided
+    if (data.categories && Array.isArray(data.categories)) {
+      for (const categoryData of data.categories) {
+        await prisma.productCategoryRelation.create({
+          data: {
+            productId: product.id,
+            categoryId: categoryData.categoryId,
+            isPrimary: categoryData.isPrimary || false
+          }
+        })
+      }
+    }
 
     return NextResponse.json(product)
   } catch (error) {
