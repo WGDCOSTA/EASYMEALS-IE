@@ -1,0 +1,14 @@
+
+{
+  "project_name": "EasyMeals.ie",
+  "github": {
+    "enabled": true,
+    "repository": "https://github.com/WGDCOSTA/easymeals-ie",
+    "auto_commit": true,
+    "auto_push": true
+  },
+  "deployment": {
+    "url": "https://easymeals.abacusai.app",
+    "post_deploy_hook": "./deploy-hook.sh"
+  }
+}
