@@ -6,8 +6,9 @@ import { getWooCommerceClient } from '@/lib/woocommerce';
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession();
+    const userRole = (session?.user as any)?.role;
     
-    if (!session || (session.user as any)?.role !== 'ADMIN') {
+    if (!session || (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

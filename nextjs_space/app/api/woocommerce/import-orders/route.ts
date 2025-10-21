@@ -8,8 +8,9 @@ import { OrderStatus } from '@prisma/client';
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession();
+    const userRole = (session?.user as any)?.role;
     
-    if (!session || (session.user as any)?.role !== 'ADMIN') {
+    if (!session || (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
