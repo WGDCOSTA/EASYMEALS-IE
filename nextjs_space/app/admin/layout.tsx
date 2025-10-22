@@ -17,7 +17,8 @@ import {
   X,
   LogOut,
   Database,
-  Gift
+  Gift,
+  FileEdit
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -30,6 +31,7 @@ const navigation = [
   { name: 'Customers', href: '/admin/customers', icon: Users },
   { name: 'Promotions', href: '/admin/promotions', icon: Gift },
   { name: 'Affiliates', href: '/admin/affiliates', icon: Users },
+  { name: 'Pages', href: '/admin/pages', icon: FileEdit },
   { name: 'Content', href: '/admin/content', icon: FileText },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'WooCommerce Import', href: '/admin/woocommerce', icon: Database },
