@@ -173,7 +173,7 @@ export default function CategoriesPage() {
                         </p>
                       )}
                       <p className="text-xs text-gray-500 mt-1">
-                        {category._count.productCategories} products
+                        {category._count?.productCategories ?? 0} products
                       </p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
@@ -198,7 +198,7 @@ export default function CategoriesPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(category.id, category.name)}
-                        disabled={category._count.productCategories > 0}
+                        disabled={(category._count?.productCategories ?? 0) > 0}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -228,7 +228,7 @@ export default function CategoriesPage() {
                               )}
                             </div>
                             <p className="text-xs text-gray-500">
-                              {child._count.productCategories} products
+                              {child._count?.productCategories ?? 0} products
                             </p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
@@ -252,7 +252,7 @@ export default function CategoriesPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDelete(child.id, child.name)}
-                              disabled={child._count.productCategories > 0}
+                              disabled={(child._count?.productCategories ?? 0) > 0}
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
