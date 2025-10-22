@@ -24,7 +24,8 @@ export async function GET(
           select: {
             name: true,
             email: true,
-            phone: true
+            phone: true,
+            address: true
           }
         },
         orderItems: {
@@ -34,7 +35,8 @@ export async function GET(
                 id: true,
                 name: true,
                 imageUrl: true,
-                storageType: true
+                storageType: true,
+                sku: true
               }
             }
           }
@@ -43,6 +45,12 @@ export async function GET(
           select: {
             name: true
           }
+        },
+        orderHistory: {
+          orderBy: { createdAt: 'desc' }
+        },
+        orderNotes: {
+          orderBy: { createdAt: 'desc' }
         }
       }
     })
@@ -78,6 +86,18 @@ export async function PATCH(
       where: { id: params.id },
       data
     })
+
+    // Create history entry if status changed
+    if (data.status) {
+      await prisma.orderHistory.create({
+        data: {
+          orderId: params.id,
+          status: data.status,
+          notes: `Status changed to ${data.status.replace(/_/g, ' ')}`,
+          createdBy: session.user.id
+        }
+      })
+    }
 
     return NextResponse.json(order)
   } catch (error) {

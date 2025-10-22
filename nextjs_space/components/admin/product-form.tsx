@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { toast } from 'sonner'
 
 interface ProductFormProps {
   productId?: string
@@ -25,6 +26,7 @@ interface Category {
 export default function ProductForm({ productId }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -212,6 +214,51 @@ export default function ProductForm({ productId }: ProductFormProps) {
         ? prev.allergens.filter(a => a !== allergen)
         : [...prev.allergens, allergen]
     }))
+  }
+
+  const populateNutritionWithAI = async () => {
+    if (!formData.description && !formData.ingredients) {
+      toast.error('Please enter product description or ingredients first')
+      return
+    }
+
+    setAiLoading(true)
+    try {
+      const res = await fetch('/api/admin/ai-nutrition', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          shortDescription: formData.shortDescription,
+          ingredients: formData.ingredients
+        })
+      })
+
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Failed to generate nutrition data')
+      }
+
+      const nutritionData = await res.json()
+
+      // Update form data with AI-generated values
+      setFormData(prev => ({
+        ...prev,
+        calories: nutritionData.calories?.toString() || prev.calories,
+        protein: nutritionData.protein?.toString() || prev.protein,
+        carbs: nutritionData.carbs?.toString() || prev.carbs,
+        fat: nutritionData.fat?.toString() || prev.fat,
+        servingSize: prev.servingSize || '1' // Default to 1 serving if not set
+      }))
+
+      toast.success('Nutrition information populated successfully!')
+    } catch (error: any) {
+      console.error('AI nutrition error:', error)
+      toast.error(error.message || 'Failed to generate nutrition data')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   return (
@@ -446,7 +493,23 @@ export default function ProductForm({ productId }: ProductFormProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Nutritional Information</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Nutritional Information</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={populateNutritionWithAI}
+                    disabled={aiLoading || (!formData.description && !formData.ingredients)}
+                    className="gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    {aiLoading ? 'Generating...' : 'AI Populate'}
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  Click "AI Populate" to automatically fill nutrition data based on product description and ingredients
+                </p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">

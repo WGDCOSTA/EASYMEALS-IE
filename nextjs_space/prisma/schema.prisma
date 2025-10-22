@@ -194,26 +194,65 @@ model DeliveryZone {
 }
 
 model Order {
-  id             String      @id @default(cuid())
-  userId         String
-  orderNumber    String      @unique
-  status         OrderStatus @default(PENDING)
-  subtotal       Float
-  deliveryFee    Float
-  total          Float
+  id              String      @id @default(cuid())
+  userId          String
+  orderNumber     String      @unique
+  status          OrderStatus @default(PENDING)
+  subtotal        Float
+  deliveryFee     Float
+  total           Float
   paymentIntentId String?
   deliveryAddress String
-  deliveryZoneId String
-  scheduledFor   DateTime?
-  notes          String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  deliveryZoneId  String
+  scheduledFor    DateTime?
+  notes           String?     @db.Text
   
-  user           User         @relation(fields: [userId], references: [id])
-  deliveryZone   DeliveryZone @relation(fields: [deliveryZoneId], references: [id])
-  orderItems     OrderItem[]
+  // CRM & Tracking Fields
+  trackingNumber  String?
+  trackingUrl     String?
+  courierName     String?
+  estimatedDeliveryDate DateTime?
+  actualDeliveryDate    DateTime?
+  
+  // Internal Notes
+  internalNotes   String?     @db.Text
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User         @relation(fields: [userId], references: [id])
+  deliveryZone    DeliveryZone @relation(fields: [deliveryZoneId], references: [id])
+  orderItems      OrderItem[]
+  orderHistory    OrderHistory[]
+  orderNotes      OrderNote[]
   
   @@map("orders")
+}
+
+model OrderHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  notes     String?     @db.Text
+  createdBy String?     // User ID of admin who made the change
+  createdAt DateTime    @default(now())
+  
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@map("order_history")
+}
+
+model OrderNote {
+  id        String   @id @default(cuid())
+  orderId   String
+  note      String   @db.Text
+  isInternal Boolean @default(false)  // Internal notes vs customer-visible notes
+  createdBy String?  // User ID of admin who created the note
+  createdAt DateTime @default(now())
+  
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@map("order_notes")
 }
 
 model OrderItem {
