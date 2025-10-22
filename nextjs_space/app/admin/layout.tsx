@@ -18,7 +18,8 @@ import {
   LogOut,
   Database,
   Gift,
-  FileEdit
+  FileEdit,
+  Tag
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -26,6 +27,7 @@ const navigation = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Products', href: '/admin/products', icon: Package },
   { name: 'Categories', href: '/admin/categories', icon: LayoutDashboard },
+  { name: 'Tags', href: '/admin/tags', icon: Tag },
   { name: 'Product Sections', href: '/admin/sections', icon: LayoutDashboard },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Customers', href: '/admin/customers', icon: Users },

@@ -116,13 +116,21 @@ model Product {
   recyclingInfo   String?         @db.Text
   safetyInfo      String?         @db.Text
   
-  tags            String[]        @default([])  // halal, pasta, kids, student, etc.
+  tags            String[]        @default([])  // halal, pasta, kids, student, etc. (legacy field)
   isFeatured      Boolean         @default(false)
   isBestOffer     Boolean         @default(false)
   isTopSaver      Boolean         @default(false)
   discount        Int?            // percentage discount
   stockAlert      Int?            // show "only X left" when stock below this
   limitedTimeOffer DateTime?      // show countdown timer
+  
+  // SEO Fields
+  metaTitle       String?         @db.Text
+  metaDescription String?         @db.Text
+  metaKeywords    String[]        @default([])
+  seoSlug         String?
+  ogImage         String?         // Open Graph image for social sharing
+  noIndex         Boolean         @default(false)
   
   // Product Variations Support
   hasVariations   Boolean         @default(false)
@@ -140,7 +148,9 @@ model Product {
   parentProduct   Product?        @relation("ProductVariations", fields: [parentProductId], references: [id])
   meals           Meal[]
   productCategories ProductCategoryRelation[]
+  productTags     ProductTag[]
   
+  @@index([seoSlug])
   @@map("products")
 }
 
@@ -361,13 +371,50 @@ enum ContactStatus {
 }
 
 model PageContent {
-  id          String   @id @default(cuid())
-  page        String   @unique // e.g., "homepage", "combos-meals", "kids-meals"
-  content     Json     // Stores editable content as JSON
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  page            String   @unique // e.g., "homepage", "combos-meals", "kids-meals"
+  content         Json     // Stores editable content as JSON
+  metaTitle       String?  @db.Text
+  metaDescription String?  @db.Text
+  metaKeywords    String[] @default([])
+  noIndex         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   
   @@map("page_contents")
+}
+
+model Tag {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
+  description  String?  @db.Text
+  color        String   @default("#1c7430")
+  icon         String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  productTags  ProductTag[]
+  
+  @@index([slug])
+  @@map("tags")
+}
+
+model ProductTag {
+  id        String   @id @default(cuid())
+  productId String
+  tagId     String
+  createdAt DateTime @default(now())
+  
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, tagId])
+  @@index([productId])
+  @@index([tagId])
+  @@map("product_tags")
 }
 
 model ProductSection {

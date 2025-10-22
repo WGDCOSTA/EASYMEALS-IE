@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ShoppingCart, Star } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { AddToCartButton } from '@/components/add-to-cart-button'
 import { CountdownTimer, StockAlert, DiscountBadge, BestOfferBadge, TopSaverBadge } from '@/components/sales-triggers'
 
 interface EnhancedProductCardProps {
@@ -113,13 +113,7 @@ export function EnhancedProductCard({ product }: EnhancedProductCardProps) {
             )}
           </div>
           
-          <Button
-            size="sm"
-            className="bg-easymeals-orange hover:bg-easymeals-orange/90 hover:scale-110 text-white rounded-full shadow-md hover:shadow-xl transition-all duration-300"
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Add
-          </Button>
+          <AddToCartButton product={product} />
         </div>
 
         <div className="mt-4 pt-4 border-t border-gray-100 transition-colors duration-300 group-hover:border-easymeals-green/30">
