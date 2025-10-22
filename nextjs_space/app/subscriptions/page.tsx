@@ -55,12 +55,8 @@ export default function SubscriptionsPage() {
   ]
 
   const handleSubscribe = () => {
-    if (!session?.user) {
-      router.push('/auth/signin')
-      return
-    }
-    // In a real app, this would create a subscription
-    alert('Subscription feature coming soon! For now, you can order individual meals.')
+    // Redirect to subscription packages page where users can choose and subscribe
+    router.push('/subscriptions/packages')
   }
 
   return (

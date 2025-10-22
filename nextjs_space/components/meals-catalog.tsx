@@ -23,7 +23,7 @@ interface Product {
 }
 
 const categories = [
-  { value: 'all', label: 'Popular', icon: Flame },
+  { value: 'all', label: 'All Meals', icon: Flame },
   { value: 'TRADITIONAL_IRISH', label: 'Irish', icon: UtensilsCrossed },
   { value: 'INTERNATIONAL', label: 'International', icon: Pizza },
   { value: 'HEALTHY', label: 'Healthy', icon: Salad },

@@ -16,6 +16,7 @@ import { AIGNutritionPopulator } from '@/components/ai-nutrition-populator'
 import { AnimatedNutritionCircles } from '@/components/animated-nutrition-circles'
 import { MacroBreakdownBar } from '@/components/macro-breakdown-bar'
 import { DetailedNutritionPanel } from '@/components/detailed-nutrition-panel'
+import { RelatedMeals } from '@/components/related-meals'
 
 interface Product {
   id: string
@@ -391,6 +392,14 @@ export default function MealPage({ params }: MealPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Related Meals Section */}
+      <RelatedMeals
+        currentProductId={currentProduct.id}
+        category={product.category}
+        storageType={currentProduct.storageType}
+        limit={6}
+      />
       
       <Footer />
     </div>

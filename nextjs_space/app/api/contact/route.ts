@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         email,
         subject,
         message,
-        userId: session?.user?.id || null
+        userId: (session?.user as any)?.id || null
       }
     })
 
