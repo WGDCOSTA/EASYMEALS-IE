@@ -36,6 +36,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
     description: '',
     shortDescription: '',
     price: '',
+    salePrice: '',
     imageUrl: '',
     category: 'TRADITIONAL_IRISH',
     storageType: 'FRESH_CHILLED',
@@ -80,6 +81,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
         description: data.description,
         shortDescription: data.shortDescription || '',
         price: data.price.toString(),
+        salePrice: data.salePrice?.toString() || '',
         imageUrl: data.imageUrl,
         category: data.category,
         storageType: data.storageType,
@@ -126,6 +128,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
+        salePrice: formData.salePrice ? parseFloat(formData.salePrice) : null,
         stockQuantity: parseInt(formData.stockQuantity),
         calories: formData.calories ? parseInt(formData.calories) : null,
         protein: formData.protein ? parseFloat(formData.protein) : null,
@@ -371,9 +374,9 @@ export default function ProductForm({ productId }: ProductFormProps) {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-3">
                   <div>
-                    <Label htmlFor="price">Price (€) *</Label>
+                    <Label htmlFor="price">Regular Price (€) *</Label>
                     <Input
                       id="price"
                       name="price"
@@ -383,6 +386,24 @@ export default function ProductForm({ productId }: ProductFormProps) {
                       onChange={handleChange}
                       required
                     />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="salePrice">Sale Price (€)</Label>
+                    <Input
+                      id="salePrice"
+                      name="salePrice"
+                      type="number"
+                      step="0.01"
+                      value={formData.salePrice}
+                      onChange={handleChange}
+                      placeholder="Optional discount price"
+                    />
+                    {formData.salePrice && formData.price && (
+                      <p className="text-xs text-green-600 mt-1">
+                        {Math.round(((parseFloat(formData.price) - parseFloat(formData.salePrice)) / parseFloat(formData.price)) * 100)}% OFF
+                      </p>
+                    )}
                   </div>
 
                   <div>

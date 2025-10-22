@@ -81,6 +81,7 @@ model Product {
   description     String          @db.Text
   shortDescription String?        @db.Text
   price           Float
+  salePrice       Float?          // Sale/discounted price
   originalPrice   Float?          // For showing discounts
   imageUrl        String
   category        ProductCategory // Legacy field, kept for compatibility
@@ -143,6 +144,7 @@ model Product {
   
   orderItems      OrderItem[]
   subscriptionItems SubscriptionItem[]
+  subscriptionPackageItems SubscriptionPackageItem[]
   sectionProducts SectionProduct[]
   variations      Product[]       @relation("ProductVariations")
   parentProduct   Product?        @relation("ProductVariations", fields: [parentProductId], references: [id])
@@ -278,9 +280,52 @@ model OrderItem {
   @@map("order_items")
 }
 
+model SubscriptionPackage {
+  id                String               @id @default(cuid())
+  name              String               // e.g., "Weekly Family Plan", "Healthy Living Pack"
+  description       String?              @db.Text
+  frequency         SubscriptionFrequency
+  price             Float                // Base price for the package
+  discountPercentage Int?                // Optional discount for subscribers
+  imageUrl          String?
+  isActive          Boolean              @default(true)
+  isFeatured        Boolean              @default(false)
+  
+  // Package configuration
+  mealsPerWeek      Int?                 // Number of meals included per delivery
+  servingsPerMeal   Int?                 // Number of servings per meal
+  customizable      Boolean              @default(true)  // Can users customize meals?
+  
+  // Package benefits/features
+  features          String[]             @default([])  // e.g., ["Free delivery", "20% discount", "Priority support"]
+  
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  
+  subscriptions     Subscription[]
+  packageItems      SubscriptionPackageItem[]
+  
+  @@map("subscription_packages")
+}
+
+model SubscriptionPackageItem {
+  id                String              @id @default(cuid())
+  packageId         String
+  productId         String
+  quantity          Int                 @default(1)
+  isDefault         Boolean             @default(true)  // Is this a default item in the package?
+  
+  package           SubscriptionPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  product           Product             @relation(fields: [productId], references: [id])
+  
+  @@unique([packageId, productId])
+  @@map("subscription_package_items")
+}
+
 model Subscription {
   id                String               @id @default(cuid())
   userId            String
+  packageId         String?              // Optional: link to a subscription package
   frequency         SubscriptionFrequency
   status            SubscriptionStatus   @default(ACTIVE)
   nextDeliveryDate  DateTime
@@ -292,6 +337,7 @@ model Subscription {
   updatedAt         DateTime             @updatedAt
   
   user              User                 @relation(fields: [userId], references: [id])
+  package           SubscriptionPackage? @relation(fields: [packageId], references: [id])
   subscriptionItems SubscriptionItem[]
   
   @@map("subscriptions")

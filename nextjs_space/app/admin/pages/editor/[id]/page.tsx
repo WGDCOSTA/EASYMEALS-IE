@@ -1,8 +1,8 @@
 
 'use client'
 
-import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import { PageEditorComponent } from '@/components/admin/page-editor'
 import { toast } from 'react-hot-toast'
 
@@ -15,19 +15,22 @@ interface PageData {
   content: any
 }
 
-export default function PageEditorPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
+export default function PageEditorPage() {
+  const params = useParams()
+  const pageId = params?.id as string
   const router = useRouter()
   const [pageData, setPageData] = useState<PageData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadPage()
-  }, [resolvedParams.id])
+    if (pageId) {
+      loadPage()
+    }
+  }, [pageId])
 
   const loadPage = async () => {
     try {
-      const response = await fetch(`/api/admin/pages/${resolvedParams.id}`)
+      const response = await fetch(`/api/admin/pages/${pageId}`)
       if (!response.ok) throw new Error('Failed to load page')
       const data = await response.json()
       setPageData(data.page)

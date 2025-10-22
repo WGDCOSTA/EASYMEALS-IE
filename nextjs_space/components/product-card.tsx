@@ -14,6 +14,7 @@ interface Product {
   name: string
   description: string
   price: number
+  salePrice?: number
   imageUrl: string
   category: string
   storageType: string
@@ -38,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
     addItem({
       id: product?.id || '',
       name: product?.name || '',
-      price: product?.price || 0,
+      price: product?.salePrice || product?.price || 0,
       imageUrl: product?.imageUrl || '',
       storageType: product?.storageType || ''
     })
@@ -129,8 +130,26 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-            <div className="text-2xl font-bold text-orange-500">
-              €{product?.price?.toFixed(2) || '0.00'}
+            <div className="flex flex-col">
+              {product?.salePrice ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-orange-500">
+                      €{product.salePrice.toFixed(2)}
+                    </span>
+                    <Badge variant="destructive" className="text-xs">
+                      {Math.round(((product.price - product.salePrice) / product.price) * 100)}% OFF
+                    </Badge>
+                  </div>
+                  <span className="text-sm text-gray-500 line-through">
+                    €{product.price.toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <div className="text-2xl font-bold text-orange-500">
+                  €{product?.price?.toFixed(2) || '0.00'}
+                </div>
+              )}
             </div>
             <Button
               onClick={handleAddToCart}
