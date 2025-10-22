@@ -600,3 +600,34 @@ enum MealType {
   DINNER
   EVENING_SNACK
 }
+
+model Promotion {
+  id              String       @id @default(cuid())
+  title           String
+  description     String       @db.Text
+  code            String?      @unique
+  discountType    DiscountType
+  discountValue   Float
+  minPurchase     Float?
+  maxDiscount     Float?
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean      @default(true)
+  usageLimit      Int?
+  usedCount       Int          @default(0)
+  targetAudience  String?      // "all", "new_customers", "vip", etc.
+  applicableCategories String[] // array of category IDs
+  imageUrl        String?
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@map("promotions")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+  BUY_X_GET_Y
+}

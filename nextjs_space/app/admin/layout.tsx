@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   LogOut,
-  Database
+  Database,
+  Gift
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Product Sections', href: '/admin/sections', icon: LayoutDashboard },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Customers', href: '/admin/customers', icon: Users },
+  { name: 'Promotions', href: '/admin/promotions', icon: Gift },
   { name: 'Affiliates', href: '/admin/affiliates', icon: Users },
   { name: 'Content', href: '/admin/content', icon: FileText },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },

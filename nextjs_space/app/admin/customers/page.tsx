@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Search, Mail, Phone, MapPin, ShoppingCart } from 'lucide-react'
+import Link from 'next/link'
 
 interface Customer {
   id: string
@@ -109,12 +110,15 @@ export default function CustomersPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Joined
                   </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredCustomers.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                       No customers found
                     </td>
                   </tr>
@@ -165,6 +169,13 @@ export default function CustomersPage() {
                         <div className="text-sm text-gray-900">
                           {new Date(customer.createdAt).toLocaleDateString('en-IE')}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <Link href={`/admin/customers/${customer.id}`}>
+                          <button className="text-orange-600 hover:text-orange-900 text-sm font-medium">
+                            View Details →
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))

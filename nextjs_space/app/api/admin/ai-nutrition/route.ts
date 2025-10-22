@@ -59,7 +59,7 @@ Important:
 - Return ONLY the JSON object, no markdown, no explanation`
 
     // Call Abacus AI API
-    const response = await fetch('https://api.abacus.ai/v1/chat/completions', {
+    const response = await fetch('https://apps.abacus.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +74,8 @@ Important:
           }
         ],
         temperature: 0.3,
-        max_tokens: 1000
+        max_tokens: 1000,
+        response_format: { type: "json_object" }
       })
     })
 
