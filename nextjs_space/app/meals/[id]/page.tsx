@@ -24,6 +24,7 @@ interface Product {
   id: string
   name: string
   description: string
+  shortDescription?: string | null
   price: number
   originalPrice?: number | null
   imageUrl: string
@@ -198,9 +199,12 @@ export default function MealPage({ params }: MealPageProps) {
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 {currentProduct.name}
               </h1>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                {currentProduct.description}
-              </p>
+              {/* Short Description - right below the product name */}
+              {currentProduct.shortDescription && (
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  {currentProduct.shortDescription}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center space-x-6 text-sm text-gray-600">
@@ -294,6 +298,61 @@ export default function MealPage({ params }: MealPageProps) {
             )}
           </div>
         </div>
+
+            {/* Product Full Description Section */}
+            {currentProduct.description && (
+              <div className="bg-white border rounded-lg p-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Description</h2>
+                <div 
+                  className="text-gray-700 leading-relaxed space-y-4"
+                  style={{
+                    fontSize: '1rem',
+                    lineHeight: '1.75'
+                  }}
+                >
+                  <style jsx>{`
+                    div :global(h1), div :global(h2), div :global(h3) {
+                      font-weight: 700;
+                      color: #111827;
+                      margin-bottom: 1rem;
+                      margin-top: 1.5rem;
+                    }
+                    div :global(h1) { font-size: 1.875rem; }
+                    div :global(h2) { font-size: 1.5rem; }
+                    div :global(h3) { font-size: 1.25rem; }
+                    div :global(h4) { font-size: 1.125rem; font-weight: 600; }
+                    div :global(p) {
+                      margin-bottom: 1rem;
+                      color: #374151;
+                      line-height: 1.75;
+                    }
+                    div :global(strong) {
+                      font-weight: 600;
+                      color: #111827;
+                    }
+                    div :global(ul), div :global(ol) {
+                      margin-left: 1.5rem;
+                      margin-bottom: 1rem;
+                      list-style-position: outside;
+                    }
+                    div :global(ul) { list-style-type: disc; }
+                    div :global(ol) { list-style-type: decimal; }
+                    div :global(li) {
+                      margin-bottom: 0.5rem;
+                      color: #374151;
+                    }
+                    div :global(a) {
+                      color: #059669;
+                      text-decoration: underline;
+                    }
+                    div :global(a:hover) {
+                      color: #047857;
+                    }
+                  `}</style>
+                  <div dangerouslySetInnerHTML={{ __html: currentProduct.description }} />
+                </div>
+              </div>
+            )}
 
             {/* AI Nutrition Populator */}
             {!currentProduct.calories && (
