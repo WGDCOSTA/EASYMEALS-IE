@@ -88,11 +88,11 @@ export function DetailedNutritionPanel({
           >
             <div className="flex items-center space-x-3">
               {getStatusIcon(item.status)}
-              <span className="text-sm font-medium text-gray-900">{item.label}</span>
+              <span className="text-sm font-medium text-gray-900" style={{ color: '#111827' }}>{item.label}</span>
             </div>
             <div className="flex items-baseline space-x-1">
-              <span className="text-lg font-bold text-gray-900">{item.value || 0}</span>
-              <span className="text-sm text-gray-600">{item.unit}</span>
+              <span className="text-lg font-bold text-gray-900" style={{ color: '#111827' }}>{item.value || 0}</span>
+              <span className="text-sm text-gray-700" style={{ color: '#374151' }}>{item.unit}</span>
             </div>
           </motion.div>
         ))}

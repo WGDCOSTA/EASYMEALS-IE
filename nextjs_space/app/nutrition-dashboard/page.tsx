@@ -16,8 +16,11 @@ import { GuestNutritionDashboard } from '@/components/guest-nutrition-dashboard'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Settings, TrendingUp, Calendar, Sparkles, History, Zap } from 'lucide-react'
+import { Settings, TrendingUp, Calendar, Sparkles, History, Zap, Activity } from 'lucide-react'
 import { toast } from 'sonner'
+import Link from 'next/link'
+import { Header } from '@/components/header'
+import { Footer } from '@/components/footer'
 
 export default function NutritionDashboard() {
   const { data: session, status } = useSession() || {}
@@ -65,7 +68,85 @@ export default function NutritionDashboard() {
   // Show guest dashboard for non-authenticated users
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        
+        {/* Nutrition Banner */}
+        <div className="bg-gradient-to-r from-purple-600 via-purple-600 to-purple-700 text-white">
+          <div className="container mx-auto max-w-7xl px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Activity className="w-5 h-5 text-white" />
+                <span className="text-sm font-medium text-white">
+                  Track your nutrition and plan your meals with our advanced dashboard
+                </span>
+              </div>
+              <Link href="/auth/signin">
+                <Button variant="secondary" size="sm" className="bg-white text-purple-600 hover:bg-gray-100 flex-shrink-0">
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Sign In to Start
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 via-white to-blue-50">
+          <div className="bg-white border-b">
+            <div className="container mx-auto px-4 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+                    <Sparkles className="w-8 h-8 mr-3 text-easymeals-green" />
+                    Nutrition Dashboard
+                  </h1>
+                  <p className="text-gray-600 mt-1">
+                    Track your nutrition goals with AI-powered insights
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="container mx-auto px-4 py-8">
+            <GuestNutritionDashboard />
+          </div>
+        </div>
+        
+        <Footer />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {/* Nutrition Banner */}
+      <div className="bg-gradient-to-r from-purple-600 via-purple-600 to-purple-700 text-white">
+        <div className="container mx-auto max-w-7xl px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Activity className="w-5 h-5 text-white" />
+              <span className="text-sm font-medium text-white">
+                Track your nutrition and plan your meals with our advanced dashboard
+              </span>
+            </div>
+            <Button
+              onClick={() => router.push('/nutrition-dashboard/settings')}
+              variant="secondary"
+              size="sm"
+              className="bg-white text-purple-600 hover:bg-gray-100 flex-shrink-0"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-green-50 via-white to-blue-50">
+        {/* Header */}
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center justify-between">
@@ -81,40 +162,6 @@ export default function NutritionDashboard() {
             </div>
           </div>
         </div>
-
-        <div className="container mx-auto px-4 py-8">
-          <GuestNutritionDashboard />
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-                <Sparkles className="w-8 h-8 mr-3 text-easymeals-green" />
-                Nutrition Dashboard
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Track your nutrition goals with AI-powered insights
-              </p>
-            </div>
-            <Button
-              onClick={() => router.push('/nutrition-dashboard/settings')}
-              variant="outline"
-              className="flex items-center space-x-2"
-            >
-              <Settings className="w-4 h-4" />
-              <span>Settings</span>
-            </Button>
-          </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4 py-8">
         {/* Delivered Order Banner */}
@@ -235,6 +282,9 @@ export default function NutritionDashboard() {
           </TabsContent>
         </Tabs>
       </div>
+      </div>
+      
+      <Footer />
     </div>
   )
 }

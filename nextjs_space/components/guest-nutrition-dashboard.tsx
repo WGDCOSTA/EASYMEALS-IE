@@ -181,7 +181,7 @@ export function GuestNutritionDashboard() {
                     <div className="font-medium text-gray-900">{meal}</div>
                     <div className="text-xs text-gray-500">08:00</div>
                   </div>
-                  <Badge variant="outline">Add</Badge>
+                  <Badge variant="outline" className="opacity-50 pointer-events-none">Empty</Badge>
                 </div>
               ))}
             </div>

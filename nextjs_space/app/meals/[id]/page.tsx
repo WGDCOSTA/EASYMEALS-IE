@@ -12,13 +12,10 @@ import { Footer } from '@/components/footer'
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { ProductAccordion } from '@/components/product-accordion'
 import { NutritionValues } from '@/lib/gda-calculator'
-import { CalorieTracker } from '@/components/calorie-tracker'
 import { AIGNutritionPopulator } from '@/components/ai-nutrition-populator'
 import { AnimatedNutritionCircles } from '@/components/animated-nutrition-circles'
 import { MacroBreakdownBar } from '@/components/macro-breakdown-bar'
 import { DetailedNutritionPanel } from '@/components/detailed-nutrition-panel'
-import Link from 'next/link'
-import { TrendingUp, Activity } from 'lucide-react'
 
 interface Product {
   id: string
@@ -132,31 +129,11 @@ export default function MealPage({ params }: MealPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      {/* Advanced Mode Banner */}
-      <div className="bg-gradient-to-r from-purple-600 via-purple-600 to-purple-700 text-white">
-        <div className="container mx-auto max-w-7xl px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Activity className="w-5 h-5 text-white" />
-              <span className="text-sm font-medium text-white">
-                Track your nutrition and plan your meals with our advanced dashboard
-              </span>
-            </div>
-            <Link href="/meals/advanced">
-              <Button variant="secondary" size="sm" className="bg-white text-purple-600 hover:bg-gray-100 flex-shrink-0">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Open Dashboard
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
 
       <div className="container mx-auto max-w-7xl px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content - 2 columns */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 gap-8">
+          {/* Main Content - Full Width */}
+          <div className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Product Image */}
               <div className="relative">
@@ -201,9 +178,10 @@ export default function MealPage({ params }: MealPageProps) {
               </h1>
               {/* Short Description - right below the product name */}
               {currentProduct.shortDescription && (
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  {currentProduct.shortDescription}
-                </p>
+                <div 
+                  className="text-lg text-gray-600 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: currentProduct.shortDescription }}
+                />
               )}
             </div>
 
@@ -409,13 +387,6 @@ export default function MealPage({ params }: MealPageProps) {
                 safetyInfo={currentProduct.safetyInfo || undefined}
                 allergens={currentProduct.allergens}
               />
-            </div>
-          </div>
-
-          {/* Sidebar - Calorie Tracker */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <CalorieTracker />
             </div>
           </div>
         </div>
