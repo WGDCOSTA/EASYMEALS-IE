@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { page: string } }
+  { params }: { params: Promise<{ page: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -17,13 +17,15 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { page } = await params
+
     const pageContent = await prisma.pageContent.findUnique({
-      where: { page: params.page }
+      where: { page }
     })
 
     if (!pageContent) {
       return NextResponse.json({ 
-        page: params.page,
+        page,
         content: {} 
       })
     }
@@ -40,7 +42,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { page: string } }
+  { params }: { params: Promise<{ page: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -49,13 +51,14 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { page } = await params
     const { content } = await request.json()
 
     const pageContent = await prisma.pageContent.upsert({
-      where: { page: params.page },
+      where: { page },
       update: { content },
       create: {
-        page: params.page,
+        page,
         content
       }
     })

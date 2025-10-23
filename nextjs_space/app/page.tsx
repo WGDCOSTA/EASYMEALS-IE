@@ -12,6 +12,7 @@ import { FadeInSection } from '@/components/fade-in-section'
 import { AnimatedBackground } from '@/components/animated-background'
 import { prisma } from '@/lib/db'
 import { EditablePageWrapper } from '@/components/editor/editable-page-wrapper'
+import { getPageContent } from '@/lib/page-content'
 
 interface ProductData {
   id: string
@@ -35,6 +36,9 @@ interface ProductData {
 }
 
 export default async function HomePage() {
+  // Get page content from database
+  const pageContent = await getPageContent('homepage')
+  
   // Get product sections with their products
   const sections = await prisma.productSection.findMany({
     where: { isActive: true },
@@ -115,10 +119,10 @@ export default async function HomePage() {
                   </span>
                 </div>
                 <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-                  Real Meals, Ready Fast - Delivered to Your Cork Home
+                  {pageContent.heroTitle || 'Real Meals, Ready Fast - Delivered to Your Cork Home'}
                 </h1>
                 <p className="text-xl text-gray-600 mb-6">
-                  From Douglas to Ballincollig, Blackrock to Bishopstown - we're bringing proper food to busy Cork people. No fancy talk, just good meals made simple.
+                  {pageContent.heroSubtitle || 'From Douglas to Ballincollig, Blackrock to Bishopstown - we\'re bringing proper food to busy Cork people. No fancy talk, just good meals made simple.'}
                 </p>
                 
                 {/* Star rating */}
@@ -134,8 +138,8 @@ export default async function HomePage() {
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild size="lg" className="bg-easymeals-orange hover:bg-easymeals-orange/90 hover:scale-105 text-white rounded-full font-semibold text-lg px-10 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <Link href="/meals">
-                      Browse Meals
+                    <Link href={pageContent.ctaLink || '/meals'}>
+                      {pageContent.ctaText || 'Browse Meals'}
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="border-2 border-easymeals-orange text-easymeals-orange hover:bg-easymeals-orange hover:text-white hover:scale-105 rounded-full font-semibold text-lg px-10 transition-all duration-300">

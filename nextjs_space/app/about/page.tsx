@@ -2,19 +2,21 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import Image from 'next/image'
+import { getPageContent } from '@/lib/page-content'
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const pageContent = await getPageContent('about')
+  
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
       <div className="container mx-auto max-w-4xl px-4 py-16">
-        <h1 className="text-5xl font-bold text-gray-900 mb-8">About Us</h1>
+        <h1 className="text-5xl font-bold text-gray-900 mb-8">{pageContent.title || 'About Us'}</h1>
         
         <div className="prose prose-lg max-w-none">
           <p className="text-xl text-gray-600 leading-relaxed mb-6">
-            Welcome to EasyMeals.ie, Ireland&apos;s premier meal delivery service bringing fresh, 
-            delicious, and nutritious meals straight to your door.
+            {pageContent.content || "Welcome to EasyMeals.ie, Ireland's premier meal delivery service bringing fresh, delicious, and nutritious meals straight to your door."}
           </p>
 
           <h2 className="text-3xl font-bold text-gray-900 mt-12 mb-4">Our Story</h2>

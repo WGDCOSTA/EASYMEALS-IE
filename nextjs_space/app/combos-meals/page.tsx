@@ -5,8 +5,11 @@ import { ArrowRight, Check, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { getPageContent } from '@/lib/page-content'
 
-export default function CombosMealsPage() {
+export default async function CombosMealsPage() {
+  const pageContent = await getPageContent('combos-meals')
+  
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -23,10 +26,10 @@ export default function CombosMealsPage() {
                 </span>
               </div>
               <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-                Combo Meals for Cork Families
+                {pageContent.title || 'Combo Meals for Cork Families'}
               </h1>
               <p className="text-xl text-gray-600 mb-6">
-                Perfect portion sizes for the whole family. Mix and match your favourites and save big on every order. Delivered fresh across Cork city and county.
+                {pageContent.description || 'Perfect portion sizes for the whole family. Mix and match your favourites and save big on every order. Delivered fresh across Cork city and county.'}
               </p>
               
               {/* Key Features */}
@@ -62,7 +65,7 @@ export default function CombosMealsPage() {
             {/* Right side - Image */}
             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
               <Image
-                src="https://cdn.abacus.ai/images/2642f787-d06a-4823-b9bf-10d7af831d03.png"
+                src={pageContent.imageUrl || 'https://cdn.abacus.ai/images/2642f787-d06a-4823-b9bf-10d7af831d03.png'}
                 alt="Family Combo Meals"
                 fill
                 className="object-cover"
